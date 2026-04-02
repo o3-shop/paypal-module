@@ -137,7 +137,8 @@ class ProxyController extends FrontendController
                 ]
             );
         }
-        $paymentId = Registry::getSession()->getVariable('paymentid');
+        $paymentId = Registry::getSession()->getVariable('paymentid')
+            ?: PayPalDefinitions::GOOGLEPAY_PAYPAL_PAYMENT_ID;
 
         $this->addToBasket();
         $this->setPayPalPaymentMethod($paymentId);
