@@ -157,7 +157,7 @@ class ServiceFactory
                 //and confirmed by paypal we should not use it for auth and
                 //so not ask for it on the configuration page
                 '',
-                $debugLevel
+                $debugLevel === 'debug'
             );
 
             $this->client = $client;
