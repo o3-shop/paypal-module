@@ -73,7 +73,7 @@
                 googlePayOrderCreateUrl: '[{$sSelfLink|cat:"cl=oscpaypalproxy&fnc=createGooglePayOrder&paymentid=oscpaypal_googlepay&context=continue&aid="|cat:$aid|cat:"&stoken="|cat:$sToken}][{$debug}]',
                 shopOrderCreateUrl: '[{$sSelfLink|cat:"cl=ajaxpay&fnc=createShopOrder&aid="|cat:$aid|cat:"&stoken="|cat:$sToken}][{$debug}]',
 
-                isSandbox: !![{$isSandBox}],
+                isSandbox: [{if $isSandBox}]true[{else}]false[{/if}],
                 useGooglePayAddress: !!'[{$bGooglePayDelivery}]',
                 merchantName: '[{$oxcmp_shop->oxshops__oxname->value|oxescape}]',
                 totalPrice: '[{$oxcmp_basket->getPriceForPayment()}]',
