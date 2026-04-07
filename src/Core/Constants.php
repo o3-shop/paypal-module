@@ -57,6 +57,8 @@ class Constants
     public const PAYPAL_MAXIMUM_TIME_FOR_CAPTURE = 29 * self::PAYPAL_DAY;
 
     // BN Codes defined together with PayPal
+
+    // @todo: change these to our own BN Codes
     public const PAYPAL_PARTNER_ATTRIBUTION_ID_PPCP = 'OXID_Cart_PPCP_fromv261';
     // deprecated, we use only the PPCP-BN-Code since now 2023-11
     public const PAYPAL_PARTNER_ATTRIBUTION_ID_EXPRESS = 'Oxid_Cart_PymtsShortcut';
