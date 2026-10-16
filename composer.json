@@ -1,15 +1,16 @@
 {
-    "name": "oxid-solution-catalysts/paypal-module",
-    "description": "OXID eSales PayPal payment module for OXID",
+    "name": "o3-shop/paypal-module",
+    "description": "O3-Shop PayPal payment module (fork of oxid-solution-catalysts/paypal-module)",
     "type": "oxideshop-module",
     "keywords": ["oxid", "modules", "eShop", "paypal", "payment"],
-    "homepage": "https://www.oxid-esales.com",
+    "homepage": "https://www.o3-shop.com/",
     "license": ["GPL-3.0"],
     "support": {
-        "source": "https://github.com/OXID-eSales/paypal-module",
-        "issues": "https://github.com/OXID-eSales/paypal-module/issues",
-        "forum": "https://forum.oxid-esales.com",
-        "docs": "https://docs.oxid-esales.com/modules/paypal-checkout/en/latest"
+        "source": "https://github.com/o3-shop/paypal-module",
+        "issues": "https://github.com/o3-shop/paypal-module/issues"
+    },
+    "replace": {
+        "oxid-solution-catalysts/paypal-module": "self.version"
     },
     "extra": {
         "oxideshop": {
