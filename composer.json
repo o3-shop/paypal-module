@@ -1,6 +1,6 @@
 {
-    "name": "o3-shop/paypal-module",
-    "description": "O3-Shop PayPal payment module (fork of oxid-solution-catalysts/paypal-module)",
+    "name": "o3-shop/paypal-checkout",
+    "description": "O3-Shop PayPal Checkout module (fork of oxid-solution-catalysts/paypal-module)",
     "type": "oxideshop-module",
     "keywords": ["oxid", "modules", "eShop", "paypal", "payment"],
     "homepage": "https://www.o3-shop.com/",
