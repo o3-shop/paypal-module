@@ -1,0 +1,53 @@
+[{if $oViewConf->enablePayPalBanners() && $oViewConf->getPayPalClientId()}]
+    [{assign var="oConfig" value=$oViewConf->getConfig()}]
+    [{assign var="PayPalSDKJS" value=$oConfig->getGlobalParameter("PayPalSDKJS")}]
+    [{if !$PayPalSDKJS}]
+        [{capture assign="PayPalSDKJS"}]
+            [{include file="modules/osc/paypal/base_js.tpl" commitFlow=false}]
+        [{/capture}]
+        [{$oConfig->setGlobalParameter("PayPalSDKJS", $PayPalSDKJS)}]
+    [{/if}]
+    [{if !isset($size)}]
+        [{assign var="size" value="20x1"}]
+    [{/if}]
+
+    [{assign var="currency" value=$oView->getActCurrency()}]
+
+    [{capture assign="installmentBanners"}]
+        var PayPalMessage = function () {
+            var windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            var bannerLayout = windowWidth <= 400 ? 'text' : 'flex';
+            paypal.Messages({
+                amount: [{$amount}],
+                currency: '[{$currency->name}]',
+                countryCode: '[{$oViewConf->getActLanguageAbbr()|upper}]',
+                style: {
+                    layout: bannerLayout,
+                    color: '[{$oViewConf->getPayPalCheckoutBannersColorScheme()}]',
+                    ratio: '[{$size}]'
+                }
+            }).render('#paypal-installment-banner-container');
+        };
+
+        var initWhenPayPalMessageAvailable = function () {
+            if (typeof paypal !== 'undefined' && typeof paypal.Messages !== 'undefined') {
+                PayPalMessage();
+            } else {
+                setTimeout(function () {
+                    initWhenPayPalMessageAvailable();
+                }, 100);
+            }
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initWhenPayPalMessageAvailable);
+        } else {
+            initWhenPayPalMessageAvailable();
+        }
+
+        window.onresize = function () {
+            initWhenPayPalMessageAvailable();
+        };
+    [{/capture}]
+    [{oxscript add=$installmentBanners}]
+[{/if}]

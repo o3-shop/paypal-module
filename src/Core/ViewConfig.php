@@ -41,6 +41,12 @@ class ViewConfig extends ViewConfig_parent
     protected $isWaveCompatibleTheme = null;
 
     /**
+     * is this an "O3"-Theme Compatible Theme?
+     * @var boolean
+     */
+    protected $isO3CompatibleTheme = null;
+
+    /**
      * @return bool
      */
     public function isPayPalCheckoutActive(): bool
@@ -632,6 +638,19 @@ class ViewConfig extends ViewConfig_parent
             $this->isWaveCompatibleTheme = $this->isCompatibleTheme('wave');
         }
         return $this->isWaveCompatibleTheme;
+    }
+
+    /**
+     * Template variable getter. Check if is an O3 Theme Compatible Theme
+     *
+     * @return boolean
+     */
+    public function isO3CompatibleTheme()
+    {
+        if (is_null($this->isO3CompatibleTheme)) {
+            $this->isO3CompatibleTheme = $this->isCompatibleTheme('o3-theme');
+        }
+        return $this->isO3CompatibleTheme;
     }
 
     /**

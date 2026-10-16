@@ -1,4 +1,6 @@
-[{if $oViewConf->isFlowCompatibleTheme()}]
+[{if $oViewConf->isO3CompatibleTheme()}]
+    [{include file='modules/osc/paypal/change_payment_o3.tpl'}]
+[{elseif $oViewConf->isFlowCompatibleTheme()}]
     [{include file='modules/osc/paypal/change_payment_flow.tpl'}]
 [{else}]
     [{include file='modules/osc/paypal/change_payment_wave.tpl'}]

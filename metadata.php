@@ -119,14 +119,18 @@ $aModule = [
         'modules/osc/paypal/paypalexpresshint.tpl' => 'osc/paypal/views/tpl/shared/paypalexpresshint.tpl',
         'modules/osc/paypal/pui_flow.tpl' => 'osc/paypal/views/tpl/flow/page/checkout/pui.tpl',
         'modules/osc/paypal/pui_wave.tpl' => 'osc/paypal/views/tpl/wave/page/checkout/pui.tpl',
+        'modules/osc/paypal/pui_o3.tpl'   => 'osc/paypal/views/tpl/o3/page/checkout/pui.tpl',
         'modules/osc/paypal/pui_fraudnet.tpl' => 'osc/paypal/views/tpl/shared/page/checkout/pui_fraudnet.tpl',
         'modules/osc/paypal/apple_pay.tpl' => 'osc/paypal/views/tpl/shared/page/checkout/apple_pay.tpl',
         'modules/osc/paypal/shipping_and_payment_flow.tpl' => 'osc/paypal/views/tpl/flow/page/checkout/shipping_and_payment.tpl',
         'modules/osc/paypal/shipping_and_payment_wave.tpl' => 'osc/paypal/views/tpl/wave/page/checkout/shipping_and_payment.tpl',
+        'modules/osc/paypal/shipping_and_payment_o3.tpl'  => 'osc/paypal/views/tpl/o3/page/checkout/shipping_and_payment.tpl',
         'modules/osc/paypal/shipping_and_payment_paypal_flow.tpl' => 'osc/paypal/views/tpl/flow/page/checkout/shipping_and_payment_paypal.tpl',
         'modules/osc/paypal/shipping_and_payment_paypal_wave.tpl' => 'osc/paypal/views/tpl/wave/page/checkout/shipping_and_payment_paypal.tpl',
+        'modules/osc/paypal/shipping_and_payment_paypal_o3.tpl'  => 'osc/paypal/views/tpl/o3/page/checkout/shipping_and_payment_paypal.tpl',
         'modules/osc/paypal/checkout_order_btn_submit_bottom_flow.tpl' => 'osc/paypal/views/tpl/flow/page/checkout/checkout_order_btn_submit_bottom.tpl',
         'modules/osc/paypal/checkout_order_btn_submit_bottom_wave.tpl' => 'osc/paypal/views/tpl/wave/page/checkout/checkout_order_btn_submit_bottom.tpl',
+        'modules/osc/paypal/checkout_order_btn_submit_bottom_o3.tpl'  => 'osc/paypal/views/tpl/o3/page/checkout/checkout_order_btn_submit_bottom.tpl',
 
         // PAYPAL-486 Register templates for overloading here;
         // use theme name in key when theme-specific. Shared templates don't receive a theme-specific key.
@@ -142,12 +146,16 @@ $aModule = [
             'osc/paypal/views/tpl/shared/page/details/inc/details_productmain_tobasket.tpl',
         'modules/osc/paypal/dd_layout_page_header_icon_menu_minibasket_functions.tpl' =>
             'osc/paypal/views/tpl/shared/widget/minibasket/dd_layout_page_header_icon_menu_minibasket_functions.tpl',
+        'modules/osc/paypal/dd_layout_page_header_icon_menu_minibasket_functions_o3.tpl' =>
+            'osc/paypal/views/tpl/o3/widget/minibasket/dd_layout_page_header_icon_menu_minibasket_functions.tpl',
         // PAYPAL-486 Theme-specific
         'modules/osc/paypal/change_payment_flow.tpl' => 'osc/paypal/views/tpl/flow/page/checkout/change_payment.tpl',
         'modules/osc/paypal/change_payment_wave.tpl' => 'osc/paypal/views/tpl/wave/page/checkout/change_payment.tpl',
+        'modules/osc/paypal/change_payment_o3.tpl'   => 'osc/paypal/views/tpl/o3/page/checkout/change_payment.tpl',
 
         // PSPAYPAL-491 Installment banners
         'modules/osc/paypal/installment_banners.tpl' => 'osc/paypal/views/tpl/shared/installment_banners.tpl',
+        'modules/osc/paypal/installment_banners_render.tpl' => 'osc/paypal/views/tpl/o3/shared/installment_banners_render.tpl',
 
         // PSPAYPAL-685 Installment banners
         'modules/osc/paypal/googlepay.tpl' => 'osc/paypal/views/tpl/shared/googlepay.tpl',
@@ -159,6 +167,7 @@ $aModule = [
         'modules/osc/paypal/account_vaulting_card.tpl'        => 'osc/paypal/views/tpl/shared/page/account/account_vaulting_card.tpl',
         'modules/osc/paypal/vaultedpaymentsources_flow.tpl'   => 'osc/paypal/views/tpl/flow/vaulting/vaultedpaymentsources.tpl',
         'modules/osc/paypal/vaultedpaymentsources_wave.tpl'   => 'osc/paypal/views/tpl/wave/vaulting/vaultedpaymentsources.tpl',
+        'modules/osc/paypal/vaultedpaymentsources_o3.tpl'     => 'osc/paypal/views/tpl/o3/vaulting/vaultedpaymentsources.tpl',
 
         'modules/osc/paypal/email/html/pui_paymentinfo.tpl' => 'osc/paypal/views/tpl/shared/email/html/pui_paymentinfo.tpl',
         'modules/osc/paypal/email/html/refund.tpl' => 'osc/paypal/views/tpl/shared/email/html/refund.tpl',
@@ -198,6 +207,11 @@ $aModule = [
             'template' => 'layout/base.tpl',
             'block' => 'base_js',
             'file' => 'views/blocks/layout/base_js.tpl'
+        ],
+        [
+            'template' => 'layout/page.tpl',
+            'block' => 'layout_breadcrumb',
+            'file' => 'views/blocks/layout/page.tpl'
         ],
         [
             'template' => 'page/account/inc/account_menu.tpl',

@@ -1,4 +1,6 @@
-[{if $oViewConf->isFlowCompatibleTheme()}]
+[{if $oViewConf->isO3CompatibleTheme()}]
+    [{include file="modules/osc/paypal/checkout_order_btn_submit_bottom_o3.tpl"}]
+[{elseif $oViewConf->isFlowCompatibleTheme()}]
     [{include file="modules/osc/paypal/checkout_order_btn_submit_bottom_flow.tpl"}]
 [{else}]
     [{include file="modules/osc/paypal/checkout_order_btn_submit_bottom_wave.tpl"}]

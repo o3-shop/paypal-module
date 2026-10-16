@@ -12,7 +12,8 @@
         if (error_message !== "") {
             const applePayInput = document.getElementById('payment_[{$sPaymentID}]');
             if (applePayInput) {
-                applePayInput.closest('.well.well-sm').remove(); // Remove the outer div if Apple Pay is not supported
+                const applePayWrapper = applePayInput.closest('.form-check') || applePayInput.closest('.well.well-sm');
+                if (applePayWrapper) applePayWrapper.remove(); // Remove the outer div if Apple Pay is not supported
             }
         }
     };
