@@ -1073,16 +1073,20 @@ class ModuleSettings
     /** check if Vaulting is allowed for Payment-Method */
     public function isVaultingAllowedForPayment(string $paymentId): bool
     {
+        $payPalDefinitions = PayPalDefinitions::getPayPalDefinitions();
+        $vaultingType = $payPalDefinitions[$paymentId]['vaultingtype'] ?? null;
+        if (!$vaultingType) {
+            return false;
+        }
+
         $payment = oxNew(Payment::class);
         $payment->load($paymentId);
         $paymentEnabled = (bool)$payment->oxpayments__oxactive->value;
-        $vaultingType = PayPalDefinitions::getPayPalDefinitions()[$paymentId]["vaultingtype"];
 
         $session = Registry::getSession();
         $actShipSet = $session->getVariable('sShipSet');
         $basket = $session->getBasket();
         $user = $session->getUser();
-        $payPalDefinitions = PayPalDefinitions::getPayPalDefinitions();
         $actShopCurrency = Registry::getConfig()->getActShopCurrencyObject();
         $userCountryIso = $this->userRepository->getUserCountryIso();
 
