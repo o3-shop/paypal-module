@@ -5,6 +5,20 @@
     "keywords": ["oxid", "modules", "eShop", "paypal", "payment"],
     "homepage": "https://www.o3-shop.com/",
     "license": ["GPL-3.0"],
+    "authors": [
+        {
+            "name": "O3-Shop",
+            "email": "info@o3-shop.com",
+            "homepage": "https://www.o3-shop.com",
+            "role": "Developer"
+        },
+        {
+            "name": "OXID eSales AG",
+            "email": "info@oxid-esales.com",
+            "homepage": "https://oxid-esales.com",
+            "role": "Developer"
+        }
+    ],
     "support": {
         "source": "https://github.com/o3-shop/paypal-module",
         "issues": "https://github.com/o3-shop/paypal-module/issues"

@@ -63,8 +63,8 @@ $sMetadataVersion = '2.1';
 $aModule = [
     'id' => 'osc_paypal',
     'title' => [
-        'de' => 'PayPal Checkout für OXID',
-        'en' => 'PayPal Checkout for OXID'
+        'de' => 'PayPal Checkout für O3-Shop',
+        'en' => 'PayPal Checkout for O3-Shop'
     ],
     'description' => [
         'de' => 'Nutzung des Online-Bezahldienstes von PayPal. Dokumentation: <a href="https://docs.oxid-esales.com/modules/paypal-checkout/de/latest/" target="_blank">PayPal Checkout</a>',
@@ -72,9 +72,9 @@ $aModule = [
     ],
     'thumbnail' => 'out/img/paypal.png',
     'version' => '2.10.1',
-    'author' => 'OXID eSales AG',
-    'url' => 'https://www.oxid-esales.com',
-    'email' => 'info@oxid-esales.com',
+    'author' => 'O3-Shop, OXID eSales AG',
+    'url' => 'https://www.o3-shop.com/',
+    'email' => 'info@o3-shop.com',
     'extend' => [
         ModuleConfiguration::class => PaypalModuleConfiguration::class,
         InputValidator::class => PayPalInputValidator::class,
