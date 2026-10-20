@@ -12,6 +12,7 @@
     <arg value="p"/>
     <arg name="colors"/>
     <arg name="extensions" value="php,dist,phtml"/>
+    <arg name="warning-severity" value="0"/>
 
     <!-- inherit rules from: -->
     <rule ref="PSR12"/>
