@@ -9,8 +9,8 @@ namespace OxidSolutionCatalysts\PayPal\Core\Onboarding;
 
 use JsonException;
 use OxidEsales\Eshop\Core\Registry;
-use OxidSolutionCatalysts\PayPal\Core\Constants;
 use OxidSolutionCatalysts\PayPal\Core\Config as PayPalConfig;
+use OxidSolutionCatalysts\PayPal\Core\Constants;
 use OxidSolutionCatalysts\PayPal\Core\PartnerConfig;
 use OxidSolutionCatalysts\PayPal\Core\PayPalSession;
 use OxidSolutionCatalysts\PayPal\Exception\OnboardingException;
@@ -232,6 +232,7 @@ class Onboarding
         $isBlikCapability = false;
         $isBanContactCapability = false;
         $isIDealCapability = false;
+        $isTrustlyCapability = false;
 
         foreach ($merchantInformations['capabilities'] as $capability) {
             $isVaultingCapability = $this->checkCapability($capability, 'PAYPAL_WALLET_VAULTING_ADVANCED') ?
@@ -267,6 +268,9 @@ class Onboarding
             $isIDealCapability = $this->checkCapability($capability, 'IDEAL') ?
                 true :
                 $isIDealCapability;
+            $isTrustlyCapability = $this->checkCapability($capability, 'TRUSTLY') ?
+                true :
+                $isTrustlyCapability;
         }
 
         if ($isApplePayCapability) {
@@ -287,6 +291,7 @@ class Onboarding
         $moduleSettings->saveBlikEligibility($isBlikCapability);
         $moduleSettings->saveBanContactEligibility($isBanContactCapability);
         $moduleSettings->saveIDealEligibility($isIDealCapability);
+        $moduleSettings->saveTrustlyEligibility($isTrustlyCapability);
 
         return [
             'acdc'        => $isAcdcCapability,
@@ -299,7 +304,8 @@ class Onboarding
             'sepa'        => $isSepaCapability,
             'blik'        => $isBlikCapability,
             'bancontact'  => $isBanContactCapability,
-            'ideal'       => $isIDealCapability
+            'ideal'       => $isIDealCapability,
+            'trustly'     => $isTrustlyCapability,
         ];
     }
 

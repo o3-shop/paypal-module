@@ -10,12 +10,12 @@ declare(strict_types=1);
 namespace OxidSolutionCatalysts\PayPal\Core;
 
 use OxidEsales\Eshop\Application\Model\Country;
+use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Exception\StandardException;
 use OxidEsales\Eshop\Core\Registry;
-use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidSolutionCatalysts\PayPal\Module;
-use OxidSolutionCatalysts\PayPal\Traits\ServiceContainer;
 use OxidSolutionCatalysts\PayPal\Service\ModuleSettings;
+use OxidSolutionCatalysts\PayPal\Traits\ServiceContainer;
 use OxidSolutionCatalysts\PayPalApi\Client;
 use RuntimeException;
 
@@ -312,6 +312,16 @@ class Config
         return $this->getModuleSettings()->isSandboxIDealEligibility();
     }
 
+    public function isLiveTrustlyEligibility(): bool
+    {
+        return $this->getModuleSettings()->isLiveTrustlyEligibility();
+    }
+
+    public function isSandboxTrustlyEligibility(): bool
+    {
+        return $this->getModuleSettings()->isSandboxTrustlyEligibility();
+    }
+
     public function getSupportedLocales(): array
     {
         return $this->getModuleSettings()->getSupportedLocales();
@@ -537,17 +547,17 @@ class Config
         $exists = false;
         if ($tableName) {
             $exists = DatabaseProvider::getDb()->getOne(
-                "SELECT
+                'SELECT
                     IF( EXISTS
                         (SELECT * FROM information_schema.COLUMNS
                             WHERE TABLE_SCHEMA = :database
                             AND TABLE_NAME = :tablename
                             LIMIT 1),
                     1, 0)
-                    AS if_exists",
+                    AS if_exists',
                 [
-                    ':database' => Registry::getConfig()->getConfigParam("dbName"),
-                    ':tablename' => $tableName
+                    ':database' => Registry::getConfig()->getConfigParam('dbName'),
+                    ':tablename' => $tableName,
                 ]
             );
         }
@@ -600,9 +610,9 @@ class Config
     {
         $config = Registry::getConfig();
         $url = $config->getConfigParam('sAdminSSLURL') ?:
-            $config->getConfigParam('sShopURL') . $config->getConfigParam('sAdminDir') . "/";
+            $config->getConfigParam('sShopURL') . $config->getConfigParam('sAdminDir') . '/';
         $url = Registry::getSession()->processUrl($url . 'index.php?');
-        $url = str_replace("&amp;", "&", $url);
+        $url = str_replace('&amp;', '&', $url);
         return $url;
     }
 
@@ -655,16 +665,16 @@ class Config
         }
 
         $user = Registry::getConfig()->getUser();
-        $payPalCustomerId = $user ? $user->getFieldData("oscpaypalcustomerid") : '';
+        $payPalCustomerId = $user ? $user->getFieldData('oscpaypalcustomerid') : '';
 
         if (!$payPalCustomerId) {
-            return "";
+            return '';
         }
 
         $vaultingService = Registry::get(ServiceFactory::class)->getVaultingService();
         $response = $vaultingService->generateUserIdToken($payPalCustomerId);
 
-        return $response["id_token"] ?? "";
+        return $response['id_token'] ?? '';
     }
 
     public function getIsGooglePayDeliveryAddressActive(): bool

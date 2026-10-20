@@ -8,15 +8,15 @@
 namespace OxidSolutionCatalysts\PayPal\Controller;
 
 use OxidEsales\Eshop\Core\Registry;
+use OxidSolutionCatalysts\PayPal\Core\PayPalDefinitions;
 use OxidSolutionCatalysts\PayPal\Core\PayPalSession;
 use OxidSolutionCatalysts\PayPal\Core\ServiceFactory;
 use OxidSolutionCatalysts\PayPal\Exception\PayPalException;
+use OxidSolutionCatalysts\PayPal\Service\ModuleSettings;
 use OxidSolutionCatalysts\PayPal\Service\OrderProcessTrackingService;
 use OxidSolutionCatalysts\PayPal\Service\Payment as PaymentService;
-use OxidSolutionCatalysts\PayPal\Traits\ServiceContainer;
-use OxidSolutionCatalysts\PayPal\Service\ModuleSettings;
-use OxidSolutionCatalysts\PayPal\Core\PayPalDefinitions;
 use OxidSolutionCatalysts\PayPal\Service\UserRepository;
+use OxidSolutionCatalysts\PayPal\Traits\ServiceContainer;
 
 class PaymentController extends PaymentController_parent
 {
@@ -55,18 +55,18 @@ class PaymentController extends PaymentController_parent
 
             if (
                 $isVaultingPossible &&
-                ($paypalCustomerId = $user->getFieldData("oscpaypalcustomerid"))
+                ($paypalCustomerId = $user->getFieldData('oscpaypalcustomerid'))
             ) {
                 $vaultingService = Registry::get(ServiceFactory::class)->getVaultingService();
                 /** @var OrderProcessTrackingService $orderProcessTrackingService */
                 $orderProcessTrackingService = Registry::get(OrderProcessTrackingService::class);
                 $vaultingService->clearVaultedTokenCache();
-                $vaultedPaymentTokens = $vaultingService->getVaultPaymentTokens($paypalCustomerId)["payment_tokens"];
+                $vaultedPaymentTokens = $vaultingService->getVaultPaymentTokens($paypalCustomerId)['payment_tokens'];
                 $orderProcessTrackingService->startPaymentProcessTracking();
                 if ($vaultedPaymentTokens) {
                     $uniquePaypalVaultedPaymentSources = [];
                     foreach ($vaultedPaymentTokens as $vaultedPaymentToken) {
-                        foreach ($vaultedPaymentToken["payment_source"] as $paymentId => $paymentSource) {
+                        foreach ($vaultedPaymentToken['payment_source'] as $paymentId => $paymentSource) {
                             $paymentTokenId = $vaultedPaymentToken['id'];
                             $label = '';
 
@@ -74,30 +74,30 @@ class PaymentController extends PaymentController_parent
                                 $paymentId === PayPalDefinitions::PAYMENT_SOURCE_CARD
                                 && $moduleSettings->isVaultingAllowedForACDC()
                             ) {
-                                $labelPrefix = $lang->translateString("OSC_PAYPAL_CARD_ENDING_IN");
-                                $label = $paymentSource["brand"] . " " . $labelPrefix . $paymentSource["last_digits"];
+                                $labelPrefix = $lang->translateString('OSC_PAYPAL_CARD_ENDING_IN');
+                                $label = $paymentSource['brand'] . ' ' . $labelPrefix . $paymentSource['last_digits'];
                             }
 
-                            if ($paymentId === "paypal" && $moduleSettings->isVaultingAllowedForPayPal()) {
-                                $labelPrefix = $lang->translateString("OSC_PAYPAL_CARD_PAYPAL_PAYMENT");
-                                $label = $labelPrefix . " " . $paymentSource["email_address"];
+                            if ($paymentId === 'paypal' && $moduleSettings->isVaultingAllowedForPayPal()) {
+                                $labelPrefix = $lang->translateString('OSC_PAYPAL_CARD_PAYPAL_PAYMENT');
+                                $label = $labelPrefix . ' ' . $paymentSource['email_address'];
                             }
 
                             $uniquePaypalVaultedPaymentSources[] = [
-                                "id" => $paymentTokenId,
-                                "label" => $label,
-                                "type" => $paymentId,
-                                "paymentSource" => $paymentSource
+                                'id' => $paymentTokenId,
+                                'label' => $label,
+                                'type' => $paymentId,
+                                'paymentSource' => $paymentSource,
                             ];
                         }
 
-                        $this->addTplParam("vaultedPaymentSources", $uniquePaypalVaultedPaymentSources);
+                        $this->addTplParam('vaultedPaymentSources', $uniquePaypalVaultedPaymentSources);
                     }
                 }
             }
 
             //reset vaulting session var
-            Registry::getSession()->deleteVariable("selectedVaultedPaymentTokenId");
+            Registry::getSession()->deleteVariable('selectedVaultedPaymentTokenId');
         }
 
         return parent::render();
@@ -105,7 +105,6 @@ class PaymentController extends PaymentController_parent
 
     public function getPayPalPuiFraudnetCmId(): string
     {
-
         if (!($cmId = PayPalSession::getPayPalPuiCmId())) {
             $cmId = Registry::getUtilsObject()->generateUId();
             PayPalSession::storePayPalPuiCmId($cmId);
@@ -148,7 +147,7 @@ class PaymentController extends PaymentController_parent
                 (
                     $payPalHealth &&
                     //dont add payment that is deprecated
-                    ( !PayPalDefinitions::isDeprecatedPayment($payment->getId()) ) &&
+                    (!PayPalDefinitions::isDeprecatedPayment($payment->getId())) &&
                     (
                         empty($payPalDefinitions[$key]['currencies']) ||
                         in_array($actShopCurrency->name, $payPalDefinitions[$key]['currencies'], true)
@@ -219,6 +218,11 @@ class PaymentController extends PaymentController_parent
             unset($paymentList[PayPalDefinitions::IDEAL_PAYPAL_PAYMENT_ID]);
         }
 
+        // check Trustly Eligibility
+        if (!$this->getServiceFromContainer(ModuleSettings::class)->isTrustlyEligibility()) {
+            unset($paymentList[PayPalDefinitions::TRUSTLY_PAYPAL_PAYMENT_ID]);
+        }
+
         return $paymentList;
     }
 
@@ -245,8 +249,8 @@ class PaymentController extends PaymentController_parent
         }
 
         //if a vaulted payment was used, store its index in the session for using it in the next step
-        if (!is_null($vaultedPaymentTokenId = $request->getRequestParameter("vaultingpaymentsource"))) {
-            Registry::getSession()->setVariable("selectedVaultedPaymentTokenId", $vaultedPaymentTokenId);
+        if (!is_null($vaultedPaymentTokenId = $request->getRequestParameter('vaultingpaymentsource'))) {
+            Registry::getSession()->setVariable('selectedVaultedPaymentTokenId', $vaultedPaymentTokenId);
         }
 
         return parent::validatePayment();

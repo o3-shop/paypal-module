@@ -554,8 +554,8 @@ class OrderController extends OrderController_parent
     {
         $requestErrorcode = (string) Registry::getRequest()->getRequestParameter('errorcode');
 
-        $this->getServiceFromContainer(PaymentService::class)
-            ->removeTemporaryOrder('', PayPalCancelReason::BUYER_CANCELLED);
+        $paymentService = $this->getServiceFromContainer(PaymentService::class);
+        $paymentService->removeTemporaryOrder('', PayPalCancelReason::BUYER_CANCELLED);
 
         /** @var LoggerInterface $logger */
         $logger = $this->getServiceFromContainer('OxidSolutionCatalysts\PayPal\Logger');
@@ -568,6 +568,24 @@ class OrderController extends OrderController_parent
 
         $goNext = 'cl=payment';
         if ($errorcode || $requestErrorcode) {
+            // A failed payment must not leave the abandoned shop order in the
+            // session. The cancel guard keeps sess_challenge when PayPal still
+            // reports the checkout order as completed (e.g. the capture is only
+            // PENDING), so retrying would reuse that order and the shop would
+            // treat the next "place order" click as an existing order, showing
+            // the thank-you page without a new payment. Keep it only when the
+            // order really is paid/captured.
+            $temporaryOrder = $paymentService->getTemporaryOrder();
+            if (
+                !$temporaryOrder ||
+                (
+                    !$temporaryOrder->isOrderSuccessfullyPaid() &&
+                    empty($temporaryOrder->getFieldData('oxtransid'))
+                )
+            ) {
+                Registry::getSession()->deleteVariable('sess_challenge');
+            }
+
             $goNext .= '&payerror=2';
             throw new Redirect(
                 Registry::getConfig()->getShopSecureHomeURL() . $goNext

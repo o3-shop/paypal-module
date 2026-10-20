@@ -37,8 +37,8 @@ class ModuleSettings
      */
     protected $requireSessionWithParams = [
         'cl' => [
-            'details' => true
-        ]
+            'details' => true,
+        ],
     ];
 
     /**
@@ -767,6 +767,23 @@ class ModuleSettings
         return (bool)$this->getSettingValue('oscPayPalSandboxIDealEligibility');
     }
 
+    public function isTrustlyEligibility(): bool
+    {
+        return $this->isSandbox() ?
+            $this->isSandboxTrustlyEligibility() :
+            $this->isLiveTrustlyEligibility();
+    }
+
+    public function isLiveTrustlyEligibility(): bool
+    {
+        return (bool)$this->getSettingValue('oscPayPalTrustlyEligibility');
+    }
+
+    public function isSandboxTrustlyEligibility(): bool
+    {
+        return (bool)$this->getSettingValue('oscPayPalSandboxTrustlyEligibility');
+    }
+
     public function getWebhookRetryDelay(): int
     {
         return (int)$this->getSettingValue('oscPayPalWebhookRetryDelay');
@@ -978,6 +995,15 @@ class ModuleSettings
             $this->save('oscPayPalSandboxIDealEligibility', $eligibility);
         } else {
             $this->save('oscPayPalIDealEligibility', $eligibility);
+        }
+    }
+
+    public function saveTrustlyEligibility(bool $eligibility): void
+    {
+        if ($this->isSandbox()) {
+            $this->save('oscPayPalSandboxTrustlyEligibility', $eligibility);
+        } else {
+            $this->save('oscPayPalTrustlyEligibility', $eligibility);
         }
     }
 

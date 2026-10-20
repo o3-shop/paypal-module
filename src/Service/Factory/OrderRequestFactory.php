@@ -116,7 +116,16 @@ class OrderRequestFactory
         $request->payment_source = $this->getSimplePaymentSource($basket, $paymentSourceId);
 
         if (PayPalDefinitions::isUAPMPayment($paymentId)) {
-            if ($paymentId === PayPalDefinitions::PRZELEWY24_PAYPAL_PAYMENT_ID) {
+            if (
+                in_array(
+                    $paymentId,
+                    [
+                        PayPalDefinitions::PRZELEWY24_PAYPAL_PAYMENT_ID,
+                        PayPalDefinitions::TRUSTLY_PAYPAL_PAYMENT_ID,
+                    ],
+                    true
+                )
+            ) {
                 $request->payment_source
                     = $this->getSimplePaymentSourceWithEMail($basket, $paymentSourceId);
             }
