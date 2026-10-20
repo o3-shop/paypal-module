@@ -4,7 +4,7 @@
     "type": "oxideshop-module",
     "keywords": ["oxid", "modules", "eShop", "paypal", "payment"],
     "homepage": "https://www.o3-shop.com/",
-    "license": ["GPL-3.0"],
+    "license": ["GPL-3.0-only"],
     "authors": [
         {
             "name": "O3-Shop",
