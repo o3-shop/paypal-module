@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.10.2] - 2026-10-20
+
+### Added
+
+- Trustly (PayPal uAPM) as a payment method, including eligibility, admin configuration and checkout handling.
+
+### FIX
+
+- Send the payer email with Trustly orders. PayPal rejected the order with `MISSING_REQUIRED_PARAMETER` for `/payment_source/trustly/email` otherwise.
+- Reset the PayPal session after a failed payment so a retry creates a new order instead of reusing the completed one.
+
 ## [2.10.1] - 2026-10-15
 
 ### FIX
