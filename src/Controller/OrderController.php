@@ -300,7 +300,6 @@ class OrderController extends OrderController_parent
             $session->setVariable('isPayPalPaymentCheckout', true);
             $status = $this->execute();
             $session->deleteVariable('isPayPalPaymentCheckout');
-
         } catch (Exception $exception) {
             /** @var LoggerInterface $logger */
             $logger = $this->getServiceFromContainer('OxidSolutionCatalysts\PayPal\Logger');
@@ -414,7 +413,8 @@ class OrderController extends OrderController_parent
             // Check if order was already successfully captured (e.g. by previous request)
             $order = oxNew(EshopModelOrder::class);
             $order->load($sessionOrderId);
-            if ($order->isLoaded() &&
+            if (
+                $order->isLoaded() &&
                 ($order->isOrderSuccessfullyPaid() || !empty($order->getFieldData('oxtransid')))
             ) {
                 return 'thankyou';
