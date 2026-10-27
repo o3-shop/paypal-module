@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Reset the PayPal session after a failed payment so a retry creates a new order instead of reusing the completed one.
 - Do not fatal when the basket has no user while building a Trustly or Przelewy24 order: the payer email is then sent empty instead of calling `getFieldData()` on `null`.
 - Fail with a clear shop error when Trustly or Przelewy24 is selected without a customer name, email or country, instead of sending an invalid PayPal order.
+- When re-registering the sandbox webhook, remove only the shop's own previously stored webhook instead of every webhook whose URL contains `oscpaypalwebhook`, so a shared PayPal app used by several developers is left intact.
 
 ## [2.10.1] - 2026-10-15
 
