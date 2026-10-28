@@ -35,11 +35,17 @@
             ]
         }
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/o3-shop/paypal-client"
+        }
+    ],
     "require": {
         "giggsey/libphonenumber-for-php": "^8.12",
         "viison/address-splitter": "^0.3.4",
         "webmozart/path-util": "^2.3.0",
-        "o3-shop/paypal-client": "^3.0.21",
+        "o3-shop/paypal-client": "^3.0.22",
         "php": "^7.4|^8.0|^8.1",
         "symfony/event-dispatcher": "*"
     },
@@ -90,6 +96,13 @@
         "allow-plugins": {
             "oxid-esales/oxideshop-unified-namespace-generator": true,
             "oxid-esales/oxideshop-composer-plugin": true
+        },
+        "policy": {
+            "advisories": {
+                "ignore": [
+                    "o3-shop/smarty"
+                ]
+            }
         }
     }
 }

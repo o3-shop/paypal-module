@@ -22,6 +22,17 @@ jobs:
           coverage: xdebug
           extensions: gd, zip
 
+      - name: Configure Composer authentication for the private client
+        working-directory: source/test-module
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          if [ -z "$GH_PAT" ]; then
+            echo "::error::The GH_PAT secret is required to install the private o3-shop/paypal-client package"
+            exit 1
+          fi
+          composer config --global --auth github-oauth.github.com "$GH_PAT"
+
       - name: Install module dependencies
         id: dependencies
         working-directory: source/test-module
