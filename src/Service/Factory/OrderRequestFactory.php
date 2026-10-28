@@ -207,7 +207,8 @@ class OrderRequestFactory
 
         // Trustly and Przelewy24 require these fields. Without a basket user the
         // helpers return empty values, and PayPal would reject the order with a
-        // generic API error; fail here with a shop exception the customer can see.
+        // generic API error; fail here before the request is sent. The exception is
+        // logged and the shop shows its normal payment error, not this text.
         if (trim($userName) === '' || trim($eMail) === '' || $countryCode === '') {
             throw new PayPalException(
                 'The selected payment method requires a customer with a name, '
