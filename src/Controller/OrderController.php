@@ -294,8 +294,14 @@ class OrderController extends OrderController_parent
             );
             $_POST['sDeliveryAddressMD5'] = $this->getDeliveryAddressMD5();
             $_POST['ord_agb'] = (int)filter_var($_POST['checkAgbTop'] ?? false, FILTER_VALIDATE_BOOLEAN);
-            $_POST['oxdownloadableproductsagreement'] = (int)filter_var($_POST['oxdownloadableproductsagreement'] ?? false, FILTER_VALIDATE_BOOLEAN);
-            $_POST['oxserviceproductsagreement'] = (int)filter_var($_POST['oxserviceproductsagreement'] ?? false, FILTER_VALIDATE_BOOLEAN);
+            $_POST['oxdownloadableproductsagreement'] = (int)filter_var(
+                $_POST['oxdownloadableproductsagreement'] ?? false,
+                FILTER_VALIDATE_BOOLEAN
+            );
+            $_POST['oxserviceproductsagreement'] = (int)filter_var(
+                $_POST['oxserviceproductsagreement'] ?? false,
+                FILTER_VALIDATE_BOOLEAN
+            );
 
             $session->setVariable('isPayPalPaymentCheckout', true);
             $status = $this->execute();

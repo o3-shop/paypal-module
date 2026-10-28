@@ -315,7 +315,12 @@ class ProxyController extends FrontendController
         } catch (Exception $exception) {
             /** @var LoggerInterface $logger */
             $logger = $this->getServiceFromContainer('OxidSolutionCatalysts\PayPal\Logger');
-            $logger->log('warning', 'Could not fetch PayPal order details for ProxyController approveOrder: ' . $exception->getMessage(), [$exception]);
+            $logger->log(
+                'warning',
+                'Could not fetch PayPal order details for ProxyController approveOrder: '
+                    . $exception->getMessage(),
+                [$exception]
+            );
         }
 
         if (!$this->getUser() && $response) {
@@ -506,8 +511,14 @@ class ProxyController extends FrontendController
         $data = json_decode(file_get_contents('php://input'), true);
         $shippingData = $data['data'];
         $_POST['ord_agb'] = (int)filter_var($data['checkAgbTop'] ?? false, FILTER_VALIDATE_BOOLEAN);
-        $_POST['oxdownloadableproductsagreement'] = (int)filter_var($data['oxdownloadableproductsagreement'] ?? false, FILTER_VALIDATE_BOOLEAN);
-        $_POST['oxserviceproductsagreement'] = (int)filter_var($data['oxserviceproductsagreement'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        $_POST['oxdownloadableproductsagreement'] = (int)filter_var(
+            $data['oxdownloadableproductsagreement'] ?? false,
+            FILTER_VALIDATE_BOOLEAN
+        );
+        $_POST['oxserviceproductsagreement'] = (int)filter_var(
+            $data['oxserviceproductsagreement'] ?? false,
+            FILTER_VALIDATE_BOOLEAN
+        );
 
         $shippingAddress = new AddressPortable();
         $shippingAddress->address_line_1 = $shippingData['shippingContact']['addressLines'][0] ?? '';

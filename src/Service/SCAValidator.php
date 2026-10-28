@@ -77,7 +77,8 @@ class SCAValidator implements SCAValidatorInterface
         try {
             switch ($this->moduleSettingsService->getPayPalSCAContingency()) {
                 case Constants::PAYPAL_SCA_WHEN_REQUIRED:
-                    return is_null($authenticationResponse) || $this->isCardUsableForPayment($payPalOrder, $authenticationResponse);
+                    return is_null($authenticationResponse)
+                        || $this->isCardUsableForPayment($payPalOrder, $authenticationResponse);
 
                 case Constants::PAYPAL_SCA_ALWAYS:
                     return $this->isCardUsableForPayment($payPalOrder, $authenticationResponse);

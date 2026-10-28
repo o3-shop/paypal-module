@@ -269,7 +269,8 @@ class AjaxPaymentController extends BaseController
         if (empty($shopOrderId) || !$order->isLoaded() || $order->getFieldData('oxstorno') == 1) {
             $this->logger->log(
                 'error',
-                'PayPal captureOrder: cannot resolve valid shop order (sess_challenge missing, DB fallback failed, or order cancelled)',
+                'PayPal captureOrder: cannot resolve valid shop order '
+                    . '(sess_challenge missing, DB fallback failed, or order cancelled)',
                 ['payPalOrderId' => $payPalOrderId, 'shopOrderId' => $shopOrderId]
             );
             $this->outputJson([
@@ -527,7 +528,11 @@ class AjaxPaymentController extends BaseController
                 $session->getBasket()
             );
         } catch (ApiException $exception) {
-            $this->logger->log('error', 'ACDC patched-order creation failed: ' . $exception->getMessage(), [$exception]);
+            $this->logger->log(
+                'error',
+                'ACDC patched-order creation failed: ' . $exception->getMessage(),
+                [$exception]
+            );
 
             // The shop order was already persisted by finalizeOrder(); cancel it and
             // clear the session so the customer returns to a clean order overview.

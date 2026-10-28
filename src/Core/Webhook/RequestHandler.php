@@ -85,7 +85,11 @@ final class RequestHandler
             );
         } catch (ApiException $exception) {
             //we could not handle the call but want to retry, so log and rethrow
-            $logger->log('error', 'Webhook transient failure (retry expected): ' . $exception->getMessage(), [$exception]);
+            $logger->log(
+                'error',
+                'Webhook transient failure (retry expected): ' . $exception->getMessage(),
+                [$exception]
+            );
             throw $exception;
         }
 

@@ -431,7 +431,11 @@ class Payment
                 ), ['payPalOrderId' => $checkoutOrderId]);
             }
         } catch (Exception $exception) {
-            $this->logger->log('warning', 'PayPal capture refused or failed: ' . $exception->getMessage(), [$exception->getMessage()]);
+            $this->logger->log(
+                'warning',
+                'PayPal capture refused or failed: ' . $exception->getMessage(),
+                [$exception->getMessage()]
+            );
             throw oxNew(StandardException::class, 'OSC_PAYPAL_ORDEREXECUTION_ERROR');
         }
 

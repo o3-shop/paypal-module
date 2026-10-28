@@ -1593,7 +1593,8 @@ class Order extends Order_parent
             ) {
                 $logger->log(
                     'info',
-                    'finalizeOrder: PayPal order already COMPLETED, skipping duplicate finalization to avoid doubled order items',
+                    'finalizeOrder: PayPal order already COMPLETED, skipping duplicate finalization '
+                        . 'to avoid doubled order items',
                     ['shopOrderId' => $oOrderId, 'payPalOrderId' => $checkoutOrderId]
                 );
                 return self::ORDER_STATE_OK;
@@ -1662,10 +1663,14 @@ class Order extends Order_parent
             && $this->isOrderPaid()
             && !empty($this->getFieldData('oxtransid'))
         ) {
-            $logger->log('info', 'finalizeOrder: parent returned PAYMENTERROR but order is already paid — overriding to OK', [
-                'shopOrderId' => $oOrderId,
-                'transId' => $this->getFieldData('oxtransid')
-            ]);
+            $logger->log(
+                'info',
+                'finalizeOrder: parent returned PAYMENTERROR but order is already paid — overriding to OK',
+                [
+                    'shopOrderId' => $oOrderId,
+                    'transId' => $this->getFieldData('oxtransid')
+                ]
+            );
             return self::ORDER_STATE_OK;
         }
 
