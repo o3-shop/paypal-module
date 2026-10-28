@@ -555,35 +555,28 @@ class OrderController extends OrderController_parent
         $requestErrorcode = (string) Registry::getRequest()->getRequestParameter('errorcode');
 
         $paymentService = $this->getServiceFromContainer(PaymentService::class);
-        $paymentService->removeTemporaryOrder('', PayPalCancelReason::BUYER_CANCELLED);
+        $cancelBlocked = $paymentService->removeTemporaryOrder('', PayPalCancelReason::BUYER_CANCELLED);
 
         /** @var LoggerInterface $logger */
         $logger = $this->getServiceFromContainer('OxidSolutionCatalysts\PayPal\Logger');
         $logger->log('info', sprintf(
-            'PayPal session canceled (errorcode: %s, request errorcode: %s, sess_challenge: %s)',
+            'PayPal session canceled (errorcode: %s, request errorcode: %s, sess_challenge: %s, cancelBlocked: %s)',
             $errorcode ?? 'none',
             $requestErrorcode ?: 'none',
-            (string) Registry::getSession()->getVariable('sess_challenge')
+            (string) Registry::getSession()->getVariable('sess_challenge'),
+            $cancelBlocked ? 'yes' : 'no'
         ));
 
         $goNext = 'cl=payment';
         if ($errorcode || $requestErrorcode) {
-            // A failed payment must not leave the abandoned shop order in the
-            // session. The cancel guard keeps sess_challenge when PayPal still
-            // reports the checkout order as completed (e.g. the capture is only
-            // PENDING), so retrying would reuse that order and the shop would
-            // treat the next "place order" click as an existing order, showing
-            // the thank-you page without a new payment. Keep it only when the
-            // order really is paid/captured.
-            $temporaryOrder = $paymentService->getTemporaryOrder();
-            if (
-                !$temporaryOrder ||
-                (
-                    !$temporaryOrder->isOrderSuccessfullyPaid() &&
-                    empty($temporaryOrder->getFieldData('oxtransid'))
-                )
-            ) {
-                Registry::getSession()->deleteVariable('sess_challenge');
+            if ($cancelBlocked) {
+                // PENDING/APPROVED/COMPLETED at PayPal: the payment is not a
+                // failure, and showing payerror=2 would invite a second order
+                // while PayPal may still capture the first one. Show the
+                // pending/thank-you state and let the webhook settle it.
+                throw new Redirect(
+                    Registry::getConfig()->getShopSecureHomeURL() . 'cl=thankyou'
+                );
             }
 
             $goNext .= '&payerror=2';

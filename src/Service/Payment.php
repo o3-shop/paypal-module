@@ -483,6 +483,12 @@ class Payment
             // If order still exists and is not stornoed, cancel was blocked
             // because PayPal already approved/captured the payment.
             $cancelBlocked = !$deleted && $orderModel->getFieldData('oxstorno') != 1;
+            if ($cancelBlocked && !$this->isPayPalPaymentStillOpen($orderModel)) {
+                // A DENIED/FAILED capture still leaves the checkout order
+                // COMPLETED, which blocks cancelPayPalOrder(). It is not a live
+                // payment, so allow the retry to start a fresh order.
+                $cancelBlocked = false;
+            }
         }
         if ($cancelBlocked) {
             // Cancel was blocked because PayPal already approved/captured the
@@ -516,6 +522,31 @@ class Payment
         }
 
         return $cancelBlocked;
+    }
+
+    /**
+     * A blocked cancel only means the payment is still open when PayPal reports
+     * COMPLETED, APPROVED or PENDING. A COMPLETED checkout order carrying a
+     * DENIED/FAILED capture is a dead payment.
+     */
+    private function isPayPalPaymentStillOpen(EshopModelOrder $orderModel): bool
+    {
+        if (!method_exists($orderModel, 'getPayPalCheckoutOrder')) {
+            return true;
+        }
+
+        try {
+            $apiOrder = $orderModel->getPayPalCheckoutOrder();
+        } catch (\Throwable $exception) {
+            // If PayPal cannot be asked, keep the block: a reused order is safer
+            // than a second charge for a capture that may still complete.
+            return true;
+        }
+
+        /** @var \OxidSolutionCatalysts\PayPal\Model\Order $orderModel */
+        return $orderModel->isPayPalOrderCompleted($apiOrder)
+            || $orderModel->isPayPalCapturePending($apiOrder)
+            || $orderModel->isPayPalOrderApproved($apiOrder);
     }
 
     public function getTemporaryOrder(?string $orderId = ''): ?EshopModelOrder
