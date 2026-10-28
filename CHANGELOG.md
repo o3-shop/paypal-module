@@ -16,9 +16,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Compare the aggregate completed-capture total instead of the original order amount when logging
   amount/currency mismatches. Partial captures below the order total are legitimate; only a
   currency mismatch or an over-capture is logged.
-- Give `oe:module:install-configuration` the same run lock and pre-write backup as
-  `oe:module:refresh-settings --from-metadata`: restore the backup when the install or refresh
-  fails and delete it only after a fully successful run.
 
 ### Added
 
