@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- The Trustly visibility and failed-payment Playwright specs now live in the module's
+  `tests/e2e/playwright` suite, together with the checkout and database helpers they need.
+  They require `PAYPAL_E2E=1`, a buyable O3-Shop demo product and, for the CH case, shop
+  database access.
+
 ## [2.10.3] - 2026-10-28
 
 ### FIX
