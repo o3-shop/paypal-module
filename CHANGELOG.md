@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.10.3] - 2026-10-28
+
+### FIX
+
+- Treat a `PENDING` PayPal capture as a pending payment instead of a failed one. The session order
+  and `sess_challenge` are kept, the customer is no longer sent to `payment?payerror=2`, and the
+  `PAYMENT.CAPTURE.DENIED` / `PAYMENT.CAPTURE.COMPLETED` webhook settles the order. This supersedes
+  the 2.10.2 reset for the PENDING case and prevents a retry from creating a second order while
+  the first capture can still complete.
+- Compare the aggregate completed-capture total instead of the original order amount when logging
+  amount/currency mismatches. Partial captures below the order total are legitimate; only a
+  currency mismatch or an over-capture is logged.
+- Give `oe:module:install-configuration` the same run lock and pre-write backup as
+  `oe:module:refresh-settings --from-metadata`: restore the backup when the install or refresh
+  fails and delete it only after a fully successful run.
+
+### Changed
+
+- The styles workflow installs the private `o3-shop/paypal-client` from its VCS repository using
+  the `GH_PAT` secret, explicitly ignores the inherited `o3-shop/smarty` advisories, and enforces
+  the full PSR-12 warning set (the 19 line-length warnings are fixed).
+- Require `o3-shop/paypal-client` `^3.0.22`.
+
+### Documentation
+
+- Clarify the uAPM payer-data validation failure.
+
 ## [2.10.2] - 2026-10-20
 
 ### Added
