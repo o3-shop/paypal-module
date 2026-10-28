@@ -20,6 +20,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   `oe:module:refresh-settings --from-metadata`: restore the backup when the install or refresh
   fails and delete it only after a fully successful run.
 
+### Added
+
+- Provide the Apple Pay domain association from the module. `out/.well-known/apple-developer-merchantid-domain-association`
+  is copied into the shop's `.well-known/` directory on activation and by the new migration when no file exists;
+  an existing merchant-specific file is never overwritten. The file bundled with the module is a fallback - merchants
+  must replace it with the association file issued for their own domain. The file in the shop core stays as a fallback
+  until every shop runs this module version.
+
 ### Changed
 
 - The styles workflow installs the private `o3-shop/paypal-client` from its VCS repository using
