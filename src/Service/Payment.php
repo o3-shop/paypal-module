@@ -535,22 +535,18 @@ class Payment
      */
     private function isPayPalPaymentStillOpen(EshopModelOrder $orderModel): bool
     {
-        if (!method_exists($orderModel, 'getPayPalCheckoutOrder')) {
+        if (!method_exists($orderModel, 'isPayPalPaymentStillOpen')) {
             return true;
         }
 
         try {
-            $apiOrder = $orderModel->getPayPalCheckoutOrder();
+            /** @var \OxidSolutionCatalysts\PayPal\Model\Order $orderModel */
+            return $orderModel->isPayPalPaymentStillOpen();
         } catch (\Throwable $exception) {
             // If PayPal cannot be asked, keep the block: a reused order is safer
             // than a second charge for a capture that may still complete.
             return true;
         }
-
-        /** @var \OxidSolutionCatalysts\PayPal\Model\Order $orderModel */
-        return $orderModel->isPayPalOrderCompleted($apiOrder)
-            || $orderModel->isPayPalCapturePending($apiOrder)
-            || $orderModel->isPayPalOrderApproved($apiOrder);
     }
 
     public function getTemporaryOrder(?string $orderId = ''): ?EshopModelOrder

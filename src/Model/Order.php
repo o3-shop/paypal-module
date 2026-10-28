@@ -1802,6 +1802,21 @@ class Order extends Order_parent
         );
     }
 
+    /**
+     * Whether a blocked cancel must keep the session order: PayPal reports the
+     * payment as COMPLETED, APPROVED or PENDING. A DENIED/FAILED capture is not
+     * a live payment even though the checkout order itself is COMPLETED, so a
+     * retry may start a fresh order in that case.
+     */
+    public function isPayPalPaymentStillOpen(?PayPalApiOrder $apiOrder = null): bool
+    {
+        $apiOrder = $apiOrder ?? $this->getPayPalCheckoutOrder();
+
+        return $this->isPayPalOrderCompleted($apiOrder)
+            || $this->isPayPalCapturePending($apiOrder)
+            || $this->isPayPalOrderApproved($apiOrder);
+    }
+
     protected function extractTransactionId(PayPalApiOrder $apiOrder): string
     {
         return (string) $apiOrder->purchase_units[0]->payments->captures[0]->id;
