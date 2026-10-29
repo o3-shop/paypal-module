@@ -30,3 +30,6 @@ php-cs-fixer.phar
 /tests/e2e/playwright/_output
 
 
+
+# Local PayPal sandbox credentials for the sandbox helper scripts
+/tests/e2e/playwright/sandbox/.paypal-sandbox.env

@@ -76,3 +76,7 @@ To run tests with ngrok, you need to set up ngrok to tunnel your local server. F
 
 ### Update config.inc.php
 Add ngrok domain to your `Oxid's config.inc.php` file.
+
+## Sandbox helper scripts
+The scripts that configure a shop checkout for PayPal sandbox development now
+live in [sandbox/README.md](sandbox/README.md).

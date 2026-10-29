@@ -26,6 +26,13 @@ Topics covered:
 
 ---
 
+### Design Notes
+
+#### 🧭 [TRUSTLY_PAYMENT_DESIGN.md](TRUSTLY_PAYMENT_DESIGN.md)
+Historical design note for the Trustly (PayPal uAPM) payment method.
+
+---
+
 ### UML Diagrams
 
 #### 🔷 [PayPal_Module_UML_Diagram.puml](UML/PayPal_Module_UML_Diagram.puml)

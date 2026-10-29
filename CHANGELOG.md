@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   `tests/e2e/playwright` suite, together with the checkout and database helpers they need.
   They require `PAYPAL_E2E=1`, a buyable O3-Shop demo product and, for the CH case, shop
   database access.
+- The PayPal sandbox development scripts moved into `tests/e2e/playwright/sandbox`, with
+  environment-driven shop, container, module, client and tunnel settings.
+- The original Trustly design note moved to `docs/TRUSTLY_PAYMENT_DESIGN.md`.
 
 ## [2.10.3] - 2026-10-28
 
