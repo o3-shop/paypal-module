@@ -8,20 +8,20 @@
 use OxidEsales\Eshop\Application\Component\BasketComponent;
 use OxidEsales\Eshop\Application\Component\UserComponent;
 use OxidEsales\Eshop\Application\Component\Widget\ArticleDetails;
+use OxidEsales\Eshop\Application\Controller\Admin\ModuleConfiguration;
+use OxidEsales\Eshop\Application\Controller\Admin\OrderArticle;
+use OxidEsales\Eshop\Application\Controller\Admin\OrderList;
+use OxidEsales\Eshop\Application\Controller\Admin\OrderMain;
+use OxidEsales\Eshop\Application\Controller\Admin\OrderOverview;
 use OxidEsales\Eshop\Application\Controller\OrderController;
 use OxidEsales\Eshop\Application\Controller\PaymentController;
-use OxidEsales\Eshop\Application\Controller\Admin\OrderMain;
-use OxidEsales\Eshop\Application\Controller\Admin\OrderArticle;
-use OxidEsales\Eshop\Application\Controller\Admin\OrderOverview;
-use OxidEsales\Eshop\Application\Controller\Admin\OrderList;
-use OxidEsales\Eshop\Application\Controller\Admin\ModuleConfiguration;
 use OxidEsales\Eshop\Application\Model\Article;
 use OxidEsales\Eshop\Application\Model\Basket;
 use OxidEsales\Eshop\Application\Model\Order;
-use OxidEsales\Eshop\Application\Model\State;
-use OxidEsales\Eshop\Application\Model\User;
 use OxidEsales\Eshop\Application\Model\Payment;
 use OxidEsales\Eshop\Application\Model\PaymentGateway;
+use OxidEsales\Eshop\Application\Model\State;
+use OxidEsales\Eshop\Application\Model\User;
 use OxidEsales\Eshop\Core\Email;
 use OxidEsales\Eshop\Core\InputValidator;
 use OxidEsales\Eshop\Core\ShopControl;
@@ -30,30 +30,29 @@ use OxidSolutionCatalysts\PayPal\Component\BasketComponent as PayPalBasketCompon
 use OxidSolutionCatalysts\PayPal\Component\UserComponent as PayPalUserComponent;
 use OxidSolutionCatalysts\PayPal\Component\Widget\ArticleDetails as PayPalArticleDetails;
 use OxidSolutionCatalysts\PayPal\Controller\Admin\ModuleConfiguration as PaypalModuleConfiguration;
-use OxidSolutionCatalysts\PayPal\Controller\Admin\PayPalOrderController;
-use OxidSolutionCatalysts\PayPal\Controller\Admin\OrderMain as PayPalOrderMainController;
 use OxidSolutionCatalysts\PayPal\Controller\Admin\OrderArticle as PayPalOrderArticleController;
 use OxidSolutionCatalysts\PayPal\Controller\Admin\OrderList as PayPalOrderListController;
+use OxidSolutionCatalysts\PayPal\Controller\Admin\OrderMain as PayPalOrderMainController;
 use OxidSolutionCatalysts\PayPal\Controller\Admin\OrderOverview as PayPalOrderOverviewController;
+use OxidSolutionCatalysts\PayPal\Controller\Admin\PayPalOrderController;
+use OxidSolutionCatalysts\PayPal\Controller\AjaxPaymentController;
 use OxidSolutionCatalysts\PayPal\Controller\OrderController as PayPalFrontEndOrderController;
 use OxidSolutionCatalysts\PayPal\Controller\PaymentController as PayPalPaymentController;
 use OxidSolutionCatalysts\PayPal\Controller\PayPalVaultingCardController;
-use OxidSolutionCatalysts\PayPal\Controller\ProxyController;
-use OxidSolutionCatalysts\PayPal\Controller\AjaxPaymentController;
-use OxidSolutionCatalysts\PayPal\Controller\WebhookController;
 use OxidSolutionCatalysts\PayPal\Controller\PayPalVaultingController;
+use OxidSolutionCatalysts\PayPal\Controller\ProxyController;
+use OxidSolutionCatalysts\PayPal\Controller\WebhookController;
+use OxidSolutionCatalysts\PayPal\Core\Email as PayPalEmail;
 use OxidSolutionCatalysts\PayPal\Core\InputValidator as PayPalInputValidator;
 use OxidSolutionCatalysts\PayPal\Core\ShopControl as PayPalShopControl;
 use OxidSolutionCatalysts\PayPal\Core\ViewConfig as PayPalViewConfig;
-use OxidSolutionCatalysts\PayPal\Core\Email as PayPalEmail;
 use OxidSolutionCatalysts\PayPal\Model\Article as PayPalArticle;
 use OxidSolutionCatalysts\PayPal\Model\Basket as PayPalBasket;
 use OxidSolutionCatalysts\PayPal\Model\Order as PayPalOrder;
-use OxidSolutionCatalysts\PayPal\Model\State as PayPalState;
-use OxidSolutionCatalysts\PayPal\Model\User as PayPalUser;
 use OxidSolutionCatalysts\PayPal\Model\Payment as PayPalPayment;
 use OxidSolutionCatalysts\PayPal\Model\PaymentGateway as PayPalPaymentGateway;
-
+use OxidSolutionCatalysts\PayPal\Model\State as PayPalState;
+use OxidSolutionCatalysts\PayPal\Model\User as PayPalUser;
 
 $sMetadataVersion = '2.1';
 
@@ -63,18 +62,18 @@ $sMetadataVersion = '2.1';
 $aModule = [
     'id' => 'osc_paypal',
     'title' => [
-        'de' => 'PayPal Checkout für OXID',
-        'en' => 'PayPal Checkout for OXID'
+        'de' => 'PayPal Checkout für O3-Shop',
+        'en' => 'PayPal Checkout for O3-Shop'
     ],
     'description' => [
         'de' => 'Nutzung des Online-Bezahldienstes von PayPal. Dokumentation: <a href="https://docs.oxid-esales.com/modules/paypal-checkout/de/latest/" target="_blank">PayPal Checkout</a>',
-        'en' => 'Use of the online payment service from PayPal. Documentation: <a href="https://docs.oxid-esales.com/modules/paypal-checkout/en/latest/" target="_blank">PayPal Checkout</a>'
+        'en' => 'Use of the online payment service from PayPal. Documentation: <a href="https://docs.oxid-esales.com/modules/paypal-checkout/en/latest/" target="_blank">PayPal Checkout</a>',
     ],
     'thumbnail' => 'out/img/paypal.png',
-    'version' => '2.10.1',
-    'author' => 'OXID eSales AG',
-    'url' => 'https://www.oxid-esales.com',
-    'email' => 'info@oxid-esales.com',
+    'version' => '2.10.3',
+    'author' => 'O3-Shop, OXID eSales AG',
+    'url' => 'https://www.o3-shop.com/',
+    'email' => 'info@o3-shop.com',
     'extend' => [
         ModuleConfiguration::class => PaypalModuleConfiguration::class,
         InputValidator::class => PayPalInputValidator::class,
@@ -96,7 +95,7 @@ $aModule = [
         OrderArticle::class => PayPalOrderArticleController::class,
         OrderList::class => PayPalOrderListController::class,
         OrderOverview::class => PayPalOrderOverviewController::class,
-        State::class => PayPalState::class
+        State::class => PayPalState::class,
     ],
     'controllers' => [
         'oscpaypalwebhook'      => WebhookController::class,
@@ -175,43 +174,42 @@ $aModule = [
         'modules/osc/paypal/email/html/cancel.tpl' => 'osc/paypal/views/tpl/shared/email/html/cancel.tpl',
         'modules/osc/paypal/email/plain/cancel.tpl' => 'osc/paypal/views/tpl/shared/email/plain/cancel.tpl',
         'modules/osc/paypal/plain/html/pui_paymentinfo.tpl' => 'osc/paypal/views/tpl/shared/plain/html/pui_paymentinfo.tpl',
-
     ],
     'events' => [
         'onActivate' => '\OxidSolutionCatalysts\PayPal\Core\Events\Events::onActivate',
-        'onDeactivate' => '\OxidSolutionCatalysts\PayPal\Core\Events\Events::onDeactivate'
+        'onDeactivate' => '\OxidSolutionCatalysts\PayPal\Core\Events\Events::onDeactivate',
     ],
     'blocks' => [
         //admin
         [
             'template' => 'headitem.tpl',
             'block' => 'admin_headitem_inccss',
-            'file' => 'views/blocks/admin/admin_headitem_inccss.tpl'
+            'file' => 'views/blocks/admin/admin_headitem_inccss.tpl',
         ],
         [
             'template' => 'headitem.tpl',
             'block' => 'admin_headitem_incjs',
-            'file' => 'views/blocks/admin/admin_headitem_incjs.tpl'
+            'file' => 'views/blocks/admin/admin_headitem_incjs.tpl',
         ],
         [
             'template' => 'order_main.tpl',
             'block' => 'admin_order_main_form_shipping',
-            'file' => 'views/blocks/admin/admin_order_main_form_shipping.tpl'
+            'file' => 'views/blocks/admin/admin_order_main_form_shipping.tpl',
         ],
         [
             'template' => 'order_main.tpl',
             'block' => 'admin_order_main_send_order',
-            'file' => 'views/blocks/admin/admin_order_main_send_order.tpl'
+            'file' => 'views/blocks/admin/admin_order_main_send_order.tpl',
         ],
         [
             'template' => 'layout/base.tpl',
             'block' => 'base_js',
-            'file' => 'views/blocks/layout/base_js.tpl'
+            'file' => 'views/blocks/layout/base_js.tpl',
         ],
         [
             'template' => 'layout/page.tpl',
             'block' => 'layout_breadcrumb',
-            'file' => 'views/blocks/layout/page.tpl'
+            'file' => 'views/blocks/layout/page.tpl',
         ],
         [
             'template' => 'page/account/inc/account_menu.tpl',
@@ -226,27 +224,27 @@ $aModule = [
         [
             'template' => 'page/checkout/basket.tpl',
             'block' => 'checkout_basket_next_step_top',
-            'file' => '/views/blocks/page/checkout/basket_installment_banner_after.tpl'
+            'file' => '/views/blocks/page/checkout/basket_installment_banner_after.tpl',
         ],
         [
             'template' => 'page/checkout/basket.tpl',
             'block' => 'checkout_basket_backtoshop_bottom',
-            'file' => '/views/blocks/page/checkout/checkout_basket_backtoshop_bottom.tpl'
+            'file' => '/views/blocks/page/checkout/checkout_basket_backtoshop_bottom.tpl',
         ],
         [
             'template' => 'page/checkout/basket.tpl',
             'block' => 'checkout_basket_emptyshippingcart',
-            'file' => '/views/blocks/page/checkout/basket_installment_banner_before.tpl'
+            'file' => '/views/blocks/page/checkout/basket_installment_banner_before.tpl',
         ],
         [
             'template' => 'page/checkout/order.tpl',
             'block' => 'checkout_order_btn_submit_bottom',
-            'file' => 'views/blocks/page/checkout/checkout_order_btn_submit_bottom.tpl'
+            'file' => 'views/blocks/page/checkout/checkout_order_btn_submit_bottom.tpl',
         ],
         [
             'template' => 'page/checkout/order.tpl',
             'block' => 'shippingAndPayment',
-            'file' => 'views/blocks/page/checkout/shipping_and_payment.tpl'
+            'file' => 'views/blocks/page/checkout/shipping_and_payment.tpl',
         ],
         [
             'template' => 'page/checkout/payment.tpl',
@@ -256,7 +254,7 @@ $aModule = [
         [
             'template' => 'page/checkout/payment.tpl',
             'block' => 'checkout_payment_main',
-            'file' => '/views/blocks/page/checkout/basket_installment_banner_before.tpl'
+            'file' => '/views/blocks/page/checkout/basket_installment_banner_before.tpl',
         ],
         [
             'template' => 'page/checkout/payment.tpl',
@@ -271,7 +269,7 @@ $aModule = [
         [
             'template' => 'page/details/inc/productmain.tpl',
             'block' => 'details_productmain_price_value',
-            'file' => '/views/blocks/page/details/inc/productmain.tpl'
+            'file' => '/views/blocks/page/details/inc/productmain.tpl',
         ],
         [
             'template' => 'page/details/inc/productmain.tpl',
@@ -281,12 +279,12 @@ $aModule = [
         [
             'template' => 'page/list/list.tpl',
             'block' => 'page_list_listhead',
-            'file' => '/views/blocks/page/list/list.tpl'
+            'file' => '/views/blocks/page/list/list.tpl',
         ],
         [
             'template' => 'page/search/search.tpl',
             'block' => 'search_header',
-            'file' => '/views/blocks/page/search/search.tpl'
+            'file' => '/views/blocks/page/search/search.tpl',
         ],
         [
             'template' => 'page/shop/start.tpl',
@@ -302,12 +300,12 @@ $aModule = [
         [
             'template' => 'email/plain/order_cust.tpl',
             'block' => 'email_plain_order_cust_paymentinfo',
-            'file' => 'views/blocks/email/plain/email_plain_order_cust_paymentinfo.tpl'
+            'file' => 'views/blocks/email/plain/email_plain_order_cust_paymentinfo.tpl',
         ],
         [
             'template' => 'email/html/order_cust.tpl',
             'block' => 'email_html_order_cust_paymentinfo',
-            'file' => 'views/blocks/email/html/email_html_order_cust_paymentinfo.tpl'
+            'file' => 'views/blocks/email/html/email_html_order_cust_paymentinfo.tpl',
         ],
     ],
     'settings' => [
@@ -315,359 +313,371 @@ $aModule = [
             'name' => 'oscPayPalSandboxMode',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalClientId',
             'type' => 'str',
             'value' => '',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalClientSecret',
             'type' => 'str',
             'value' => '',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalClientMerchantId',
             'type' => 'str',
             'value' => '',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalMerchantCountry',
             'type' => 'str',
             'value' => '',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalWebhookId',
             'type' => 'str',
             'value' => '',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxClientId',
             'type' => 'str',
             'value' => '',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxClientSecret',
             'type' => 'str',
             'value' => '',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxClientMerchantId',
             'type' => 'str',
             'value' => '',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxMerchantCountry',
             'type' => 'str',
             'value' => '',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxWebhookId',
             'type' => 'str',
             'value' => '',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalShowProductDetailsButton',
             'type' => 'bool',
             'value' => true,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalShowBasketButton',
             'type' => 'bool',
             'value' => true,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalShowMiniBasketButton',
             'type' => 'bool',
             'value' => true,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalShowPayLaterButton',
             'type' => 'bool',
             'value' => true,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalAutoBillOutstanding',
             'type' => 'bool',
             'value' => true,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalStandardCaptureStrategy',
             'type' => 'select',
             'value' => 'directly',
             'constraints' => 'directly|delivery|manually',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSetupFeeFailureAction',
             'type' => 'select',
             'value' => 'CONTINUE',
             'constraints' => 'CONTINUE|CANCEL',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalPaymentFailureThreshold',
             'type' => 'str',
             'value' => '',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalBannersShowAll',
             'type' => 'bool',
             'value' => true,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalBannersStartPage',
             'type' => 'bool',
             'value' => true,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalBannersStartPageSelector',
             'type' => 'str',
             'value' => '#wrapper .row',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalBannersCategoryPage',
             'type' => 'bool',
             'value' => true,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalBannersCategoryPageSelector',
             'type' => 'str',
             'value' => '.page-header',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalBannersSearchResultsPage',
             'type' => 'bool',
             'value' => true,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalBannersSearchResultsPageSelector',
             'type' => 'str',
             'value' => '#content .page-header .clearfix',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalBannersProductDetailsPage',
             'type' => 'bool',
             'value' => true,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalBannersProductDetailsPageSelector',
             'type' => 'str',
             'value' => '#detailsItemsPager',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalBannersCheckoutPage',
             'type' => 'bool',
             'value' => true,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalBannersCartPageSelector',
             'type' => 'str',
             'value' => '.cart-buttons',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalBannersPaymentPageSelector',
             'type' => 'str',
             'value' => '.checkoutSteps ~ .spacer',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalBannersColorScheme',
             'type' => 'select',
             'constraints' => 'blue|black|white|gray|monochrome|grayscale',
             'value' => 'blue',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalLegacySettingsTransferred',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalLoginWithPayPalEMail',
             'type' => 'bool',
             'value' => true,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalAcdcEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalPuiEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalVaultingEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalApplePayEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalGooglePayEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalEpsEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalPrzelewy24Eligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSepaEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalBlikEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalBanContactEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalIDealEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
+        ],
+        [
+            'name' => 'oscPayPalTrustlyEligibility',
+            'type' => 'bool',
+            'value' => false,
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxAcdcEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxPuiEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxVaultingEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxApplePayEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxGooglePayEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxEpsEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxPrzelewy24Eligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxSepaEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxBlikEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxBanContactEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSandboxIDealEligibility',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
+        ],
+        [
+            'name' => 'oscPayPalSandboxTrustlyEligibility',
+            'type' => 'bool',
+            'value' => false,
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalSCAContingency',
             'type' => 'select',
             'value' => 'SCA_WHEN_REQUIRED',
             'constraints' => 'SCA_ALWAYS|SCA_WHEN_REQUIRED|SCA_DISABLED',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalCleanUpNotFinishedOrdersAutomaticlly',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalStartTimeCleanUpOrders',
             'type' => 'num',
             'value' => 60,
-            'group' => null
+            'group' => null,
         ],
         [
             'group' => null,
@@ -679,84 +689,84 @@ $aModule = [
             'name' => 'oscPayPalSetVaulting',
             'type' => 'bool',
             'value' => true,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalUseGooglePayAddress',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalDefaultShippingPriceExpress',
             'type' => 'str',
             'value' => '3.5',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalWebhookRetryDelay',
             'type' => 'num',
             'value' => 20,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalAutomatedRefundOnCancel',
             'type' => 'bool',
             'value' => false,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalRefundMailRecipient',
             'type' => 'str',
             'value' => '0',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalCancelMailRecipient',
             'type' => 'str',
             'value' => '0',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalUseStructuralCustomIdSchema',
             'type' => 'bool',
             'value' => true,
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalButtonStyleLayout',
             'type' => 'select',
             'constraints' => 'vertical|horizontal',
             'value' => 'vertical',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalButtonStyleColor',
             'type' => 'select',
             'constraints' => 'gold|blue|silver|white|black',
             'value' => 'gold',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalButtonStyleShape',
             'type' => 'select',
             'constraints' => 'rect|pill|sharp',
             'value' => 'rect',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalButtonStyleLabel',
             'type' => 'select',
             'constraints' => 'paypal|checkout|buynow|pay|installment',
             'value' => 'paypal',
-            'group' => null
+            'group' => null,
         ],
         [
             'name' => 'oscPayPalDebugLevel',
             'type' => 'select',
             'constraints' => 'off|debug|error',
             'value' => 'off',
-            'group' => null
+            'group' => null,
         ],
     ],
 ];

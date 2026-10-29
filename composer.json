@@ -4,7 +4,21 @@
     "type": "oxideshop-module",
     "keywords": ["oxid", "modules", "eShop", "paypal", "payment"],
     "homepage": "https://www.o3-shop.com/",
-    "license": ["GPL-3.0"],
+    "license": ["GPL-3.0-only"],
+    "authors": [
+        {
+            "name": "O3-Shop",
+            "email": "info@o3-shop.com",
+            "homepage": "https://www.o3-shop.com",
+            "role": "Developer"
+        },
+        {
+            "name": "OXID eSales AG",
+            "email": "info@oxid-esales.com",
+            "homepage": "https://oxid-esales.com",
+            "role": "Developer"
+        }
+    ],
     "support": {
         "source": "https://github.com/o3-shop/paypal-module",
         "issues": "https://github.com/o3-shop/paypal-module/issues"
@@ -21,11 +35,17 @@
             ]
         }
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/o3-shop/paypal-client"
+        }
+    ],
     "require": {
         "giggsey/libphonenumber-for-php": "^8.12",
         "viison/address-splitter": "^0.3.4",
         "webmozart/path-util": "^2.3.0",
-        "oxid-solution-catalysts/paypal-client": "^3.0.20|dev-b-7.0.x",
+        "o3-shop/paypal-client": "^3.0.22",
         "php": "^7.4|^8.0|^8.1",
         "symfony/event-dispatcher": "*"
     },
@@ -33,7 +53,7 @@
         "symfony/dotenv": "*",
         "squizlabs/php_codesniffer": "3.*",
         "phpmd/phpmd": "^2.11",
-        "oxid-esales/oxideshop-ce": "^6.8",
+        "o3-shop/shop-ce": "^1.7",
         "phpstan/phpstan": "^1.10"
     },
     "conflict": {
@@ -76,6 +96,13 @@
         "allow-plugins": {
             "oxid-esales/oxideshop-unified-namespace-generator": true,
             "oxid-esales/oxideshop-composer-plugin": true
+        },
+        "policy": {
+            "advisories": {
+                "ignore": [
+                    "o3-shop/smarty"
+                ]
+            }
         }
     }
 }

@@ -37,8 +37,8 @@ class ModuleSettings
      */
     protected $requireSessionWithParams = [
         'cl' => [
-            'details' => true
-        ]
+            'details' => true,
+        ],
     ];
 
     /**
@@ -767,6 +767,23 @@ class ModuleSettings
         return (bool)$this->getSettingValue('oscPayPalSandboxIDealEligibility');
     }
 
+    public function isTrustlyEligibility(): bool
+    {
+        return $this->isSandbox() ?
+            $this->isSandboxTrustlyEligibility() :
+            $this->isLiveTrustlyEligibility();
+    }
+
+    public function isLiveTrustlyEligibility(): bool
+    {
+        return (bool)$this->getSettingValue('oscPayPalTrustlyEligibility');
+    }
+
+    public function isSandboxTrustlyEligibility(): bool
+    {
+        return (bool)$this->getSettingValue('oscPayPalSandboxTrustlyEligibility');
+    }
+
     public function getWebhookRetryDelay(): int
     {
         return (int)$this->getSettingValue('oscPayPalWebhookRetryDelay');
@@ -981,6 +998,15 @@ class ModuleSettings
         }
     }
 
+    public function saveTrustlyEligibility(bool $eligibility): void
+    {
+        if ($this->isSandbox()) {
+            $this->save('oscPayPalSandboxTrustlyEligibility', $eligibility);
+        } else {
+            $this->save('oscPayPalTrustlyEligibility', $eligibility);
+        }
+    }
+
     public function saveWebhookId(string $webhookId): void
     {
         if ($this->isSandbox()) {
@@ -1073,16 +1099,20 @@ class ModuleSettings
     /** check if Vaulting is allowed for Payment-Method */
     public function isVaultingAllowedForPayment(string $paymentId): bool
     {
+        $payPalDefinitions = PayPalDefinitions::getPayPalDefinitions();
+        $vaultingType = $payPalDefinitions[$paymentId]['vaultingtype'] ?? null;
+        if (!$vaultingType) {
+            return false;
+        }
+
         $payment = oxNew(Payment::class);
         $payment->load($paymentId);
         $paymentEnabled = (bool)$payment->oxpayments__oxactive->value;
-        $vaultingType = PayPalDefinitions::getPayPalDefinitions()[$paymentId]["vaultingtype"];
 
         $session = Registry::getSession();
         $actShipSet = $session->getVariable('sShipSet');
         $basket = $session->getBasket();
         $user = $session->getUser();
-        $payPalDefinitions = PayPalDefinitions::getPayPalDefinitions();
         $actShopCurrency = Registry::getConfig()->getActShopCurrencyObject();
         $userCountryIso = $this->userRepository->getUserCountryIso();
 

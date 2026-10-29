@@ -17,6 +17,7 @@ use OxidEsales\EshopCommunity\Internal\Framework\Module\Cache\ModuleCacheService
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleConfigurationDaoBridgeInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface;
 use OxidEsales\EshopCommunity\Internal\Transition\Utility\ContextInterface;
+use OxidSolutionCatalysts\PayPal\Core\ApplePay\ApplePayDomainAssociation;
 use OxidSolutionCatalysts\PayPal\Core\Onboarding\Webhook;
 use OxidSolutionCatalysts\PayPal\Service\ModuleSettings;
 use OxidSolutionCatalysts\PayPal\Service\UserRepository;
@@ -40,6 +41,10 @@ class Events
     {
         // execute module migrations
         self::executeModuleMigrations();
+
+        // make sure the Apple Pay domain association is available even when
+        // the migration already ran for an existing installation
+        self::ensureApplePayDomainAssociation();
 
         //add static contents and payment methods
         self::addStaticContents();
@@ -77,6 +82,13 @@ class Events
 
         if ($neeedsUpdate) {
             $migrations->execute('migrations:migrate', 'osc_paypal');
+        }
+    }
+
+    private static function ensureApplePayDomainAssociation(): void
+    {
+        if (function_exists('getShopBasePath')) {
+            ApplePayDomainAssociation::ensureInstalled(getShopBasePath());
         }
     }
 

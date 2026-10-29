@@ -237,6 +237,7 @@ class Order extends Order_parent
             $isUAPM
         ) {
             if ($this->isPayPalOrderCompleted($payPalApiOrder)) {
+                $this->logIfPayPalCapturedAmountMismatch($payPalApiOrder, 'finalizeOrderAfterExternalPayment');
                 $this->markOrderPaid();
                 $transactionId = $this->extractTransactionId($payPalApiOrder);
                 $this->setTransId($transactionId);
@@ -272,8 +273,7 @@ class Order extends Order_parent
                     $this->getFieldData('oxordernr'),
                     $this->getPayPalCapturePendingReason($payPalApiOrder) ?: 'unknown'
                 ), ['payPalOrderId' => $payPalOrderId]);
-            }
-            elseif ($isUAPM && $this->isPayPalOrderApproved($payPalApiOrder)) {
+            } elseif ($isUAPM && $this->isPayPalOrderApproved($payPalApiOrder)) {
                 $this->markOrderPaymentNotFinished();
                 $transactionId = $this->extractTransactionId($payPalApiOrder);
                 //prepare capture tracking
@@ -664,7 +664,6 @@ class Order extends Order_parent
                 PayPalSession::setSessionRedirectLink($redirectLink);
 
                 return self::ORDER_STATE_SESSIONPAYMENT_INPROGRESS;
-
             } catch (Exception $exception) {
                 $this->cancelPayPalOrder();
                 /** @var LoggerInterface $logger */
@@ -1111,9 +1110,9 @@ class Order extends Order_parent
 
         if (!$trackCode || !$trackCarrier || !$transactionId || !$payPalOrderId) {
             $missing = array_filter([
-                !$trackCode     ? 'trackCode'     : null,
-                !$trackCarrier  ? 'trackCarrier'  : null,
-                !$transactionId ? 'capture_id'    : null,
+                !$trackCode ? 'trackCode' : null,
+                !$trackCarrier ? 'trackCarrier' : null,
+                !$transactionId ? 'capture_id' : null,
                 !$payPalOrderId ? 'payPalOrderId' : null,
             ]);
             /** @var LoggerInterface $logger */
@@ -1594,7 +1593,8 @@ class Order extends Order_parent
             ) {
                 $logger->log(
                     'info',
-                    'finalizeOrder: PayPal order already COMPLETED, skipping duplicate finalization to avoid doubled order items',
+                    'finalizeOrder: PayPal order already COMPLETED, skipping duplicate finalization '
+                        . 'to avoid doubled order items',
                     ['shopOrderId' => $oOrderId, 'payPalOrderId' => $checkoutOrderId]
                 );
                 return self::ORDER_STATE_OK;
@@ -1610,8 +1610,7 @@ class Order extends Order_parent
             $oOrderId
         );
 
-        if (!$bIsPayPalPayment && $payPalOrderId)
-        {
+        if (!$bIsPayPalPayment && $payPalOrderId) {
             $this->paymentService->removeTemporaryOrder();
             $oSession->setVariable('sess_challenge', Registry::getUtilsObject()->generateUId());
         }
@@ -1664,10 +1663,14 @@ class Order extends Order_parent
             && $this->isOrderPaid()
             && !empty($this->getFieldData('oxtransid'))
         ) {
-            $logger->log('info', 'finalizeOrder: parent returned PAYMENTERROR but order is already paid — overriding to OK', [
-                'shopOrderId' => $oOrderId,
-                'transId' => $this->getFieldData('oxtransid')
-            ]);
+            $logger->log(
+                'info',
+                'finalizeOrder: parent returned PAYMENTERROR but order is already paid — overriding to OK',
+                [
+                    'shopOrderId' => $oOrderId,
+                    'transId' => $this->getFieldData('oxtransid')
+                ]
+            );
             return self::ORDER_STATE_OK;
         }
 
@@ -1684,6 +1687,80 @@ class Order extends Order_parent
             $apiOrder->status === PayPalApiOrder::STATUS_COMPLETED &&
             $apiOrder->purchase_units[0]->payments->captures[0]->status === Capture::STATUS_COMPLETED
         );
+    }
+
+    /**
+     * Defense-in-depth only: log when the aggregate completed-capture amount or
+     * currency differs grossly from the shop order before the order is marked
+     * paid. Partial captures below the order total are legitimate and do not log.
+     */
+    public function logIfPayPalCapturedAmountMismatch(PayPalApiOrder $apiOrder, string $context): void
+    {
+        if (!$this->hasPayPalCapturedAmountMismatch($apiOrder)) {
+            return;
+        }
+
+        $captured = $this->getPayPalCapturedTotal($apiOrder);
+        $capturedValue = $captured['value'];
+        $capturedCurrency = $captured['currency'];
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->getServiceFromContainer('OxidSolutionCatalysts\PayPal\Logger');
+        $logger->log('warning', sprintf(
+            '%s: PayPal captured total %s %s does not match shop order %s (nr: %s) total %s %s',
+            $context,
+            $capturedValue,
+            $capturedCurrency,
+            $this->getId(),
+            $this->getFieldData('oxordernr'),
+            (float)$this->getFieldData('oxtotalordsum'),
+            (string)$this->getFieldData('oxcurrency')
+        ), ['payPalOrderId' => $apiOrder->id ?? '']);
+    }
+
+    /**
+     * A partial capture below the order total is legitimate; only a currency
+     * mismatch or an aggregate above the order total is a gross mismatch.
+     */
+    public function hasPayPalCapturedAmountMismatch(PayPalApiOrder $apiOrder): bool
+    {
+        $captured = $this->getPayPalCapturedTotal($apiOrder);
+        $orderCurrency = (string)$this->getFieldData('oxcurrency');
+
+        if ($captured['currency'] === '' || $orderCurrency === '') {
+            return false;
+        }
+
+        return strcasecmp($captured['currency'], $orderCurrency) !== 0
+            || $captured['value'] > (float)$this->getFieldData('oxtotalordsum') + 0.01;
+    }
+
+    /**
+     * Sum of COMPLETED captures only; PENDING/DENIED captures are not money moved.
+     *
+     * @return array{value: float, currency: string}
+     */
+    public function getPayPalCapturedTotal(PayPalApiOrder $apiOrder): array
+    {
+        $captures = $apiOrder->purchase_units[0]->payments->captures ?? [];
+        $value = 0.0;
+        $currency = '';
+
+        foreach ($captures as $capture) {
+            if (($capture->status ?? '') !== Capture::STATUS_COMPLETED) {
+                continue;
+            }
+
+            $amount = $capture->amount ?? null;
+            if ($amount === null || !isset($amount->value, $amount->currency_code)) {
+                continue;
+            }
+
+            $value += (float)$amount->value;
+            $currency = (string)$amount->currency_code;
+        }
+
+        return ['value' => $value, 'currency' => $currency];
     }
 
     /**
@@ -1723,6 +1800,21 @@ class Order extends Order_parent
             ) &&
             $apiOrder->status === PayPalApiOrder::STATUS_APPROVED
         );
+    }
+
+    /**
+     * Whether a blocked cancel must keep the session order: PayPal reports the
+     * payment as COMPLETED, APPROVED or PENDING. A DENIED/FAILED capture is not
+     * a live payment even though the checkout order itself is COMPLETED, so a
+     * retry may start a fresh order in that case.
+     */
+    public function isPayPalPaymentStillOpen(?PayPalApiOrder $apiOrder = null): bool
+    {
+        $apiOrder = $apiOrder ?? $this->getPayPalCheckoutOrder();
+
+        return $this->isPayPalOrderCompleted($apiOrder)
+            || $this->isPayPalCapturePending($apiOrder)
+            || $this->isPayPalOrderApproved($apiOrder);
     }
 
     protected function extractTransactionId(PayPalApiOrder $apiOrder): string

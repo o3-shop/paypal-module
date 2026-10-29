@@ -127,6 +127,15 @@ abstract class WebhookHandlerBase
         /** @var ?PayPalApiModelOrder $orderDetail */
         $orderDetail = $this->getPayPalOrderDetails($payPalOrderId);
 
+        if ($orderDetail !== null && method_exists($order, 'logIfPayPalCapturedAmountMismatch')) {
+            /** @var \OxidSolutionCatalysts\PayPal\Model\Order $paypalShopOrder */
+            $paypalShopOrder = $order;
+            $paypalShopOrder->logIfPayPalCapturedAmountMismatch(
+                $orderDetail,
+                'webhook ' . static::WEBHOOK_EVENT_NAME
+            );
+        }
+
         $this->updateStatus(
             $this->getStatusFromResource($eventPayload),
             $paypalOrderModel,

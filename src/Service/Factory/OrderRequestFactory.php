@@ -23,6 +23,7 @@ use OxidEsales\Eshop\Core\Registry;
 use OxidSolutionCatalysts\PayPal\Core\CustomerAddressHelper;
 use OxidSolutionCatalysts\PayPal\Core\PayPalDefinitions;
 use OxidSolutionCatalysts\PayPal\Core\ServiceFactory;
+use OxidSolutionCatalysts\PayPal\Exception\PayPalException;
 use OxidSolutionCatalysts\PayPal\Service\BasketSummaryService;
 use OxidSolutionCatalysts\PayPal\Service\LanguageLocaleMapper;
 use OxidSolutionCatalysts\PayPal\Service\ModuleSettings;
@@ -116,7 +117,16 @@ class OrderRequestFactory
         $request->payment_source = $this->getSimplePaymentSource($basket, $paymentSourceId);
 
         if (PayPalDefinitions::isUAPMPayment($paymentId)) {
-            if ($paymentId === PayPalDefinitions::PRZELEWY24_PAYPAL_PAYMENT_ID) {
+            if (
+                in_array(
+                    $paymentId,
+                    [
+                        PayPalDefinitions::PRZELEWY24_PAYPAL_PAYMENT_ID,
+                        PayPalDefinitions::TRUSTLY_PAYPAL_PAYMENT_ID,
+                    ],
+                    true
+                )
+            ) {
                 $request->payment_source
                     = $this->getSimplePaymentSourceWithEMail($basket, $paymentSourceId);
             }
@@ -193,12 +203,24 @@ class OrderRequestFactory
         $userName = $this->getUserNameFromBasket($basket);
         $country = $this->getCountryFromBasket($basket);
         $eMail = $this->getEMailFromBasket($basket);
+        $countryCode = (string)$country->getFieldData('oxisoalpha2');
+
+        // Trustly and Przelewy24 require these fields. Without a basket user the
+        // helpers return empty values, and PayPal would reject the order with a
+        // generic API error; fail here before the request is sent. The exception is
+        // logged and the shop shows its normal payment error, not this text.
+        if (trim($userName) === '' || trim($eMail) === '' || $countryCode === '') {
+            throw new PayPalException(
+                'The selected payment method requires a customer with a name, '
+                . 'email address and country. Please complete your billing address.'
+            );
+        }
 
         return new PaymentSource([
             $requestName => [
                 'name' => $userName,
                 'email' => $eMail,
-                'country_code' => $country->getFieldData('oxisoalpha2')
+                'country_code' => $countryCode
             ]
         ]);
     }

@@ -246,6 +246,11 @@ class Webhook
         $this->getModuleSettings()->saveWebhookId($webhookId);
     }
 
+    public function getStoredWebhookId(): string
+    {
+        return $this->getModuleSettings()->getWebhookId();
+    }
+
     public function getAllRegisteredWebhooks(): array
     {
         /** @var GenericService $webhookService */

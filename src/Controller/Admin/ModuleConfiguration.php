@@ -380,7 +380,11 @@ class ModuleConfiguration extends ModuleConfiguration_parent
         } catch (Exception $exception) {
             /** @var LoggerInterface $logger */
             $logger = $this->getServiceFromContainer('OxidSolutionCatalysts\PayPal\Logger');
-            $logger->log('error', 'Onboarding callback payload could not be stored: ' . $exception->getMessage(), [$exception]);
+            $logger->log(
+                'error',
+                'Onboarding callback payload could not be stored: ' . $exception->getMessage(),
+                [$exception]
+            );
         }
 
         $this->autoConfiguration();

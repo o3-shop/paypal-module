@@ -27,6 +27,7 @@ final class PayPalDefinitions
     public const IDEAL_PAYPAL_PAYMENT_ID = 'oscpaypal_ideal';
     public const PRZELEWY24_PAYPAL_PAYMENT_ID = 'oscpaypal_przelewy24';
     public const BANCONTACT_PAYPAL_PAYMENT_ID = 'oscpaypal_bancontact';
+    public const TRUSTLY_PAYPAL_PAYMENT_ID = 'oscpaypal_trustly';
 
     public const PAYMENT_SOURCE_PAYPAL = 'paypal';
     public const PAYMENT_SOURCE_CARD = 'card';
@@ -36,28 +37,27 @@ final class PayPalDefinitions
 
     public const VAULTABLE_PAYMENT_SOURCES = [self::PAYMENT_SOURCE_PAYPAL, self::PAYMENT_SOURCE_CARD];
 
-
     //vaulting
     public const PAYMENT_VAULTING = [
-        "store_in_vault" => "ON_SUCCESS"
+        'store_in_vault' => 'ON_SUCCESS',
     ];
 
     private const PAYMENT_CONSTRAINTS_PAYPAL = [
         'oxfromamount' => 0.01,
         'oxtoamount' => 60000,
-        'oxaddsumtype' => 'abs'
+        'oxaddsumtype' => 'abs',
     ];
 
     private const PAYMENT_CONSTRAINTS_UAPM = [
         'oxfromamount' => 1,
         'oxtoamount' => 10000,
-        'oxaddsumtype' => 'abs'
+        'oxaddsumtype' => 'abs',
     ];
 
     private const PAYMENT_CONSTRAINTS_PUI = [
         'oxfromamount' => 5,
         'oxtoamount' => 1500,
-        'oxaddsumtype' => 'abs'
+        'oxaddsumtype' => 'abs',
     ];
 
     private const PAYPAL_DEFINTIONS = [
@@ -67,13 +67,13 @@ final class PayPalDefinitions
                 'de' => [
                     'desc' => 'PayPal',
                     'longdesc' => '',
-                    'longdesc_beta' => 'Bezahlen Sie bequem mit PayPal.'
+                    'longdesc_beta' => 'Bezahlen Sie bequem mit PayPal.',
                 ],
                 'en' => [
                     'desc' => 'PayPal',
                     'longdesc' => '',
-                    'longdesc_beta' => 'Pay conveniently with PayPal.'
-                ]
+                    'longdesc_beta' => 'Pay conveniently with PayPal.',
+                ],
             ],
             'countries' => [],
             'currencies' => ['AUD', 'BRL', 'CAD', 'CNY', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'TWD', 'NZD', 'NOK', 'PHP', 'PLN', 'GBP', 'RUB', 'SGD', 'SEK', 'CHF', 'THB', 'USD'],
@@ -83,7 +83,7 @@ final class PayPalDefinitions
             'proxycontroller' => true,
             'defaulton' => true,
             'vaultingtype' => self::PAYMENT_SOURCE_PAYPAL,
-            'paymentsource' => self::PAYMENT_SOURCE_PAYPAL
+            'paymentsource' => self::PAYMENT_SOURCE_PAYPAL,
         ],
         //GooglePay
         self::GOOGLEPAY_PAYPAL_PAYMENT_ID => [
@@ -91,13 +91,13 @@ final class PayPalDefinitions
                 'de' => [
                     'desc' => 'PayPal GooglePay',
                     'longdesc' => '',
-                    'longdesc_beta' => 'Bezahlen Sie bequem mit GooglePay. Starten Sie direkt von der Detailsseite oder im Warenkorb.'
+                    'longdesc_beta' => 'Bezahlen Sie bequem mit GooglePay. Starten Sie direkt von der Detailsseite oder im Warenkorb.',
                 ],
                 'en' => [
                     'desc' => 'PayPal GooglePay',
                     'longdesc' => '',
-                    'longdesc_beta' => 'Pay conveniently with GooglePay. Start directly from the details page or in the shopping cart.'
-                ]
+                    'longdesc_beta' => 'Pay conveniently with GooglePay. Start directly from the details page or in the shopping cart.',
+                ],
             ],
             'countries' => [],
             'currencies' => ['AUD', 'BRL', 'CAD', 'CNY', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'TWD', 'NZD', 'NOK', 'PHP', 'PLN', 'GBP', 'RUB', 'SGD', 'SEK', 'CHF', 'THB', 'USD'],
@@ -106,7 +106,7 @@ final class PayPalDefinitions
             'buttonpayment' => false,
             'proxycontroller' => true,
             'defaulton' => true,
-            'paymentsource' => self::PAYMENT_SOURCE_GOOGLEPAY
+            'paymentsource' => self::PAYMENT_SOURCE_GOOGLEPAY,
         ],
         //ApplePay
         self::APPLEPAY_PAYPAL_PAYMENT_ID => [
@@ -114,13 +114,13 @@ final class PayPalDefinitions
                 'de' => [
                     'desc' => 'PayPal ApplePay',
                     'longdesc' => '',
-                    'longdesc_beta' => 'Bezahlen Sie bequem mit ApplePay. Starten Sie direkt von der Detailsseite oder im Warenkorb.'
+                    'longdesc_beta' => 'Bezahlen Sie bequem mit ApplePay. Starten Sie direkt von der Detailsseite oder im Warenkorb.',
                 ],
                 'en' => [
                     'desc' => 'PayPal ApplePay',
                     'longdesc' => '',
-                    'longdesc_beta' => 'Pay conveniently with ApplePay. Start directly from the details page or in the shopping cart.'
-                ]
+                    'longdesc_beta' => 'Pay conveniently with ApplePay. Start directly from the details page or in the shopping cart.',
+                ],
             ],
             'countries' => [],
             'currencies' => ['AUD', 'BRL', 'CAD', 'CNY', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'TWD', 'NZD', 'NOK', 'PHP', 'PLN', 'GBP', 'RUB', 'SGD', 'SEK', 'CHF', 'THB', 'USD'],
@@ -129,7 +129,7 @@ final class PayPalDefinitions
             'buttonpayment' => false,
             'proxycontroller' => true,
             'defaulton' => true,
-            'paymentsource' => self::PAYMENT_SOURCE_APPLEPAY
+            'paymentsource' => self::PAYMENT_SOURCE_APPLEPAY,
         ],
         //Paylater PayPal
         self::PAYLATER_PAYPAL_PAYMENT_ID => [
@@ -137,13 +137,13 @@ final class PayPalDefinitions
                 'de' => [
                     'desc' => 'PayPal - später bezahlen',
                     'longdesc' => '',
-                    'longdesc_beta' => 'Kaufen Sie jetzt und bezahlen sie später mit PayPal.'
+                    'longdesc_beta' => 'Kaufen Sie jetzt und bezahlen sie später mit PayPal.',
                 ],
                 'en' => [
                     'desc' => 'PayPal - pay later',
                     'longdesc' => '',
-                    'longdesc_beta' => 'Buy now and pay later with PayPal.'
-                ]
+                    'longdesc_beta' => 'Buy now and pay later with PayPal.',
+                ],
             ],
             'countries' => ['DE', 'ES', 'FR', 'GB', 'IT', 'US', 'AU'],
             'currencies' => ['AUD', 'EUR', 'GBP', 'USD'],
@@ -152,7 +152,7 @@ final class PayPalDefinitions
             'buttonpayment' => false,
             'defaulton' => true,
             'deprecated' => true,
-            'paymentsource' => self::PAYMENT_SOURCE_PAYPAL
+            'paymentsource' => self::PAYMENT_SOURCE_PAYPAL,
         ],
         //Express PayPal
         self::EXPRESS_PAYPAL_PAYMENT_ID => [
@@ -160,13 +160,13 @@ final class PayPalDefinitions
                 'de' => [
                     'desc' => 'PayPal Express',
                     'longdesc' => '',
-                    'longdesc_beta' => 'Bezahlen Sie bequem mit PayPal. Starten Sie direkt von der Detailsseite oder im Warenkorb.'
+                    'longdesc_beta' => 'Bezahlen Sie bequem mit PayPal. Starten Sie direkt von der Detailsseite oder im Warenkorb.',
                 ],
                 'en' => [
                     'desc' => 'PayPal Express',
                     'longdesc' => '',
-                    'longdesc_beta' => 'Pay conveniently with PayPal. Start directly from the details page or in the shopping cart.'
-                ]
+                    'longdesc_beta' => 'Pay conveniently with PayPal. Start directly from the details page or in the shopping cart.',
+                ],
             ],
             'countries' => [],
             'currencies' => ['AUD', 'BRL', 'CAD', 'CNY', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'TWD', 'NZD', 'NOK', 'PHP', 'PLN', 'GBP', 'RUB', 'SGD', 'SEK', 'CHF', 'THB', 'USD'],
@@ -175,7 +175,7 @@ final class PayPalDefinitions
             'buttonpayment' => true,
             'proxycontroller' => false,
             'defaulton' => true,
-            'paymentsource' => self::PAYMENT_SOURCE_PAYPAL
+            'paymentsource' => self::PAYMENT_SOURCE_PAYPAL,
         ],
         self::PUI_PAYPAL_PAYMENT_ID => [
             'descriptions' => [
@@ -183,14 +183,14 @@ final class PayPalDefinitions
                     'desc' => 'PayPal Rechnungskauf',
                     'longdesc' => '',
                     'longdesc_beta' => '<img src="" title="Rechnungskauf" style="float: left;margin-right: 10px;" />
-                        Bezahlen Sie bequem mit PayPal'
+                        Bezahlen Sie bequem mit PayPal',
                 ],
                 'en' => [
                     'desc' => 'PayPal Pay upon Invoice',
                     'longdesc' => '',
                     'longdesc_beta' => '<img src="" title="Pay upon Invoice" style="float: left;margin-right: 10px;" />
-                        Pay conveniently with PayPal'
-                ]
+                        Pay conveniently with PayPal',
+                ],
             ],
             'countries' => ['DE'],
             'currencies' => ['EUR'],
@@ -200,7 +200,7 @@ final class PayPalDefinitions
             'proxycontroller' => false,
             'gatewaypayment' => true,
             'defaulton' => true,
-            'paymentsource' => self::PAYMENT_SOURCE_PUI
+            'paymentsource' => self::PAYMENT_SOURCE_PUI,
         ],
         self::SEPA_PAYPAL_PAYMENT_ID => [
             'descriptions' => [
@@ -208,14 +208,14 @@ final class PayPalDefinitions
                     'desc' => 'PayPal SEPA Bankeinzug',
                     'longdesc' => '',
                     'longdesc_beta' => '<img src="" title="SEPA Bankeinzug" style="float: left;margin-right: 10px;" />
-                        Bezahlen Sie bequem mit SEPA Bankeinzug'
+                        Bezahlen Sie bequem mit SEPA Bankeinzug',
                 ],
                 'en' => [
                     'desc' => 'PayPal SEPA direct debit',
                     'longdesc' => '',
                     'longdesc_beta' => '<img src="" title="SEPA direct debit" style="float: left;margin-right: 10px;" />
-                        Pay conveniently with SEPA direct debit'
-                ]
+                        Pay conveniently with SEPA direct debit',
+                ],
             ],
             'countries' => ['DE'],
             'currencies' => ['EUR'],
@@ -224,7 +224,7 @@ final class PayPalDefinitions
             'buttonpayment' => true,
             'proxycontroller' => false,
             'defaulton' => true,
-            'paymentsource' => self::PAYMENT_SOURCE_PAYPAL
+            'paymentsource' => self::PAYMENT_SOURCE_PAYPAL,
         ],
         self::CCALTERNATIVE_PAYPAL_PAYMENT_ID => [
             'descriptions' => [
@@ -232,14 +232,14 @@ final class PayPalDefinitions
                     'desc' => 'PayPal Kredit- oder Debitkarte Fallback',
                     'longdesc' => '',
                     'longdesc_beta' => '<img src="" title="PayPal Kredit- oder Debitkarte Fallback" style="float: left;margin-right: 10px;" />
-                        Bezahlen Sie bequem mit PayPal Kreditkarte'
+                        Bezahlen Sie bequem mit PayPal Kreditkarte',
                 ],
                 'en' => [
                     'desc' => 'PayPal Credit or Debit Card Fallback',
                     'longdesc' => '',
                     'longdesc_beta' => '<img src="" title="PayPal Credit or Debit Card Fallback" style="float: left;margin-right: 10px;" />
-                        Pay conveniently with PayPal CreditCard'
-                ]
+                        Pay conveniently with PayPal CreditCard',
+                ],
             ],
             'countries' => ['DE'],
             'currencies' => ['EUR'],
@@ -249,7 +249,7 @@ final class PayPalDefinitions
             'proxycontroller' => false,
             'defaulton' => false,
             'deprecated' => false,
-            'paymentsource' => self::PAYMENT_SOURCE_PAYPAL
+            'paymentsource' => self::PAYMENT_SOURCE_PAYPAL,
         ],
         self::ACDC_PAYPAL_PAYMENT_ID => [
             'descriptions' => [
@@ -257,14 +257,14 @@ final class PayPalDefinitions
                     'desc' => 'PayPal Kredit- oder Debitkarte',
                     'longdesc' => '',
                     'longdesc_beta' => '<img src="" title="PayPal Kredit- oder Debitkarte" style="float: left;margin-right: 10px;" />
-                        Bezahlen Sie bequem mit Kreditkarte'
+                        Bezahlen Sie bequem mit Kreditkarte',
                 ],
                 'en' => [
                     'desc' => 'PayPal Credit or Debit Card',
                     'longdesc' => '',
                     'longdesc_beta' => '<img src="" title="PayPal Credit or Debit Card" style="float: left;margin-right: 10px;" />
-                        Pay conveniently with Creditcard'
-                ]
+                        Pay conveniently with Creditcard',
+                ],
             ],
             'countries' => [],
             'unsupportedmerchantcountries' => ['CH'],
@@ -275,7 +275,7 @@ final class PayPalDefinitions
             'proxycontroller' => false,
             'defaulton' => true,
             'vaultingtype' => self::PAYMENT_SOURCE_CARD,
-            'paymentsource' => self::PAYMENT_SOURCE_CARD
+            'paymentsource' => self::PAYMENT_SOURCE_CARD,
         ],
         // uAPM Bancontact
         self::BANCONTACT_PAYPAL_PAYMENT_ID => [
@@ -289,7 +289,7 @@ final class PayPalDefinitions
                         und 150.000 verarbeiteten online-Transaktionen pro Tag. Bancontact ermöglicht es, direkt durch
                         die Online-Zahlungssysteme aller großen belgischen Banken  zu bezahlen und kann von allen Kunden
                         mit einer Zahlungskarte der Marke Bancontact genutzt werden. Bancontact-Karten werden von mehr
-                        als 20 belgische Banken ausgestellt und existiert ausschließlich in Belgien.'
+                        als 20 belgische Banken ausgestellt und existiert ausschließlich in Belgien.',
                 ],
                 'en' => [
                     'desc' => 'PayPal Bancontact',
@@ -300,8 +300,8 @@ final class PayPalDefinitions
                         transactions processed a day. Bancontact makes it possible to pay directly through
                         the online payment systems of all major Belgian banks and can be used by all customers
                         with a Bancontact branded payment card. Bancontact cards are issued by more than
-                        20 Belgian banks and exists solely in Belgium.'
-                ]
+                        20 Belgian banks and exists solely in Belgium.',
+                ],
             ],
             'countries' => ['BE'],
             'currencies' => ['EUR'],
@@ -311,7 +311,7 @@ final class PayPalDefinitions
             'buttonpayment' => false,
             'proxycontroller' => false,
             'defaulton' => true,
-            'paymentsource' => 'bancontact'
+            'paymentsource' => 'bancontact',
         ],
         // uAPM BLIK
         self::BLIK_PAYPAL_PAYMENT_ID => [
@@ -326,7 +326,7 @@ final class PayPalDefinitions
                         BLIK steht für Smartphone-Nutzer zur Verfügung, die Mobile-Banking-Apps von teilnehmenden Banken
                         installiert haben. Der Verbraucher stellt seinen BLIK-Code (6 Ziffern) bereit, um sich im BLIK-
                         System zu authentifizieren, ohne seine sensiblen personenbezogenen Daten preiszugeben. BLIK
-                        OneClick ist eine nahtlose Flow-Integration, die eine großartiges Verbrauchererlebnis bietet.'
+                        OneClick ist eine nahtlose Flow-Integration, die eine großartiges Verbrauchererlebnis bietet.',
                 ],
                 'en' => [
                     'desc' => 'PayPal BLIK',
@@ -338,8 +338,8 @@ final class PayPalDefinitions
                         smartphone users who have installed mobile banking apps from participating banks. The consumer
                         provides their BLIK code (6 digits) to authenticate in the BLIK system, without giving away any
                         sensitive personal data. BLIK OneClick is a seamless flow integration that offers a great
-                        consumer experience.'
-                ]
+                        consumer experience.',
+                ],
             ],
             'countries' => ['PL'],
             'currencies' => ['PLN'],
@@ -349,7 +349,7 @@ final class PayPalDefinitions
             'buttonpayment' => false,
             'proxycontroller' => false,
             'defaulton' => true,
-            'paymentsource' => 'blik'
+            'paymentsource' => 'blik',
         ],
         // uAPM EPS
         self::EPS_PAYPAL_PAYMENT_ID => [
@@ -362,7 +362,7 @@ final class PayPalDefinitions
                         entwickelt von österreichischen Banken: über 80 % aller Online-Händler in Österreich bieten
                         ihren Kunden eps an. 83% der Österreicher kaufen grenzüberschreitend ein. eps ist eine
                         wichtige Zahlungsmethode für die Zahlung eines Händlers in Europa. Jede Transaktion
-                        wird von eps garantiert.'
+                        wird von eps garantiert.',
                 ],
                 'en' => [
                     'desc' => 'PayPal EPS',
@@ -371,8 +371,8 @@ final class PayPalDefinitions
                         eps is the main bank transfer payment method in Austria, built by Austrian banks:
                         more than 80% of all online merchants in Austria offer eps to their customers. With 83% of
                         Austrians shopping cross border, eps is a critical payment method for a merchant’s payment
-                        method mix in Europe. Every transaction is guaranteed by eps.'
-                ]
+                        method mix in Europe. Every transaction is guaranteed by eps.',
+                ],
             ],
             'countries' => ['AT'],
             'currencies' => ['EUR'],
@@ -382,7 +382,7 @@ final class PayPalDefinitions
             'buttonpayment' => false,
             'proxycontroller' => false,
             'defaulton' => true,
-            'paymentsource' => 'eps'
+            'paymentsource' => 'eps',
         ],
         // uAPM GiroPay
         self::GIROPAY_PAYPAL_PAYMENT_ID => [
@@ -395,7 +395,7 @@ final class PayPalDefinitions
                          Ihre Bankkontoinformationen und Transaktionsdetails bleiben vollständig geschützt und sicher.
                          Beim Auschecken können Verbraucher Giropay direkt ohne zusätzliche Registrierung nutzen.
                          Giropay unterstützt fast alle Banken in Deutschland, und es gibt über 45 Millionen Online-Banking
-                         Kunden, die Giropay verwenden (54 % der Gesamtbevölkerung).'
+                         Kunden, die Giropay verwenden (54 % der Gesamtbevölkerung).',
                 ],
                 'en' => [
                     'desc' => 'PayPal GiroPay',
@@ -405,8 +405,8 @@ final class PayPalDefinitions
                         their bank account information and transaction details remain fully protected and secure.
                         When consumers check out, they can use Giropay directly without any additional registration.
                         Giropay supports nearly all banks in Germany, and there are over 45 million online banking
-                        customers who use Giropay (54% overall population).'
-                ]
+                        customers who use Giropay (54% overall population).',
+                ],
             ],
             'countries' => ['DE'],
             'currencies' => ['EUR'],
@@ -417,7 +417,7 @@ final class PayPalDefinitions
             'proxycontroller' => false,
             'defaulton' => false,
             'deprecated' => true,
-            'paymentsource' => 'giropay'
+            'paymentsource' => 'giropay',
         ],
         // uAPM iDEAL
         self::IDEAL_PAYPAL_PAYMENT_ID => [
@@ -432,7 +432,7 @@ final class PayPalDefinitions
                          oder online via Kundenkonto auf der Banking-Website zu bezahlen. Das System bietet
                          den Verbrauchern die Geschwindigkeit und die Vorteile der Bereitstellung
                          vorausgefüllte Zahlungsinformationen, da die Methode nahtlos in die Online-Banking-Systeme
-                         integriert ist, die von allen Banken angeboten werden.'
+                         integriert ist, die von allen Banken angeboten werden.',
                 ],
                 'en' => [
                     'desc' => 'PayPal iDEAL',
@@ -443,8 +443,8 @@ final class PayPalDefinitions
                         iDEAL allows customers to pay via it’s mobile app or within the customers’ online
                         banking website. The system offers consumers the speed and advantages of providing
                         pre-filled payment information, as the method is seamlessly integrated with the
-                        online banking systems offered by all banks.'
-                ]
+                        online banking systems offered by all banks.',
+                ],
             ],
             'countries' => ['NL'],
             'currencies' => ['EUR'],
@@ -454,7 +454,7 @@ final class PayPalDefinitions
             'buttonpayment' => false,
             'proxycontroller' => false,
             'defaulton' => true,
-            'paymentsource' => 'ideal'
+            'paymentsource' => 'ideal',
         ],
         // uAPM Przelewy24
         self::PRZELEWY24_PAYPAL_PAYMENT_ID => [
@@ -465,7 +465,7 @@ final class PayPalDefinitions
                     'longdesc_beta' => '<img src="https://www.paypalobjects.com/images/checkout/alternative_payments/paypal_przelewy24_color.svg" title="Przelewy24" style="float: left;margin-right: 10px;" />
                         Przelewy24, oft auch als P24 bezeichnet, ist eine der wichtigsten Online-Zahlungs-
                         Systeme in Polen. Mehr als 80 % der Online-Shopper in Polen bezahlen über Przelewy24 und
-                        fast 10.000 online Händler bieten diese Zahlungsmethode in ihren Online-Shops an.'
+                        fast 10.000 online Händler bieten diese Zahlungsmethode in ihren Online-Shops an.',
                 ],
                 'en' => [
                     'desc' => 'PayPal Przelewy24',
@@ -473,8 +473,8 @@ final class PayPalDefinitions
                     'longdesc_beta' => '<img src="https://www.paypalobjects.com/images/checkout/alternative_payments/paypal_przelewy24_color.svg" title="Przelewy24" style="float: left;margin-right: 10px;" />
                         Przelewy24, often referred to as P24, is one of Poland’s primary online payment
                         systems. More than 80% of online shoppers in Poland pay via Przelewy24 and almost 10,000 online
-                        merchants offer this payment method in their online shops.'
-                ]
+                        merchants offer this payment method in their online shops.',
+                ],
             ],
             'countries' => ['PL'],
             'currencies' => ['EUR', 'PLN'],
@@ -484,7 +484,35 @@ final class PayPalDefinitions
             'buttonpayment' => false,
             'proxycontroller' => false,
             'defaulton' => true,
-            'paymentsource' => 'p24'
+            'paymentsource' => 'p24',
+        ],
+        // uAPM Trustly
+        self::TRUSTLY_PAYPAL_PAYMENT_ID => [
+            'descriptions' => [
+                'de' => [
+                    'desc' => 'PayPal Trustly',
+                    'longdesc' => '',
+                    'longdesc_beta' => '<img src="https://www.paypalobjects.com/images/checkout/alternative_payments/paypal_trustly_color.svg" title="Trustly" style="float: left;margin-right: 10px;" />
+                        Trustly erfüllt die hohe Nachfrage nach Banküberweisungszahlungen in wichtigen europäischen
+                        Märkten. Kunden zahlen direkt von ihrem Bankkonto aus, ohne die Shop-Seite zu verlassen.',
+                ],
+                'en' => [
+                    'desc' => 'PayPal Trustly',
+                    'longdesc' => '',
+                    'longdesc_beta' => '<img src="https://www.paypalobjects.com/images/checkout/alternative_payments/paypal_trustly_color.svg" title="Trustly" style="float: left;margin-right: 10px;" />
+                        Trustly meets the high demand for bank transfer payments in key European markets.
+                        Customers pay directly from their bank account without leaving the shop.',
+                ],
+            ],
+            'countries' => ['AT','DE','DK','EE','ES','FI','GB','LT','LV','NL','NO','SE'],
+            'currencies' => ['EUR','DKK','SEK','GBP','NOK'],
+            'isuapm' => true,
+            'constraints' => self::PAYMENT_CONSTRAINTS_UAPM,
+            'onlybrutto' => false,
+            'buttonpayment' => false,
+            'proxycontroller' => false,
+            'defaulton' => true,
+            'paymentsource' => 'trustly',
         ],
     ];
 
@@ -509,8 +537,8 @@ final class PayPalDefinitions
                 from the payment partner, Ratepay. You also agree to PayPal’s
                 <a href="https://www.paypal.com/de/webapps/mpp/ua/rechnungskauf-mit-ratepay?locale.x=en_US"
                 target="_blank">privacy statement</a>. If your request to purchase upon invoice is accepted, the purchase price claim
-                will be assigned to Ratepay, and you may only pay Ratepay, not the merchant.'
-        ]
+                will be assigned to Ratepay, and you may only pay Ratepay, not the merchant.',
+        ],
     ];
 
     public static function getPayPalDefinitions()
@@ -553,7 +581,7 @@ final class PayPalDefinitions
         $mapping = [
             self::STANDARD_PAYPAL_PAYMENT_ID => 'oscpaypal_paypal',
             self::PAYMENT_SOURCE_PAYPAL => 'oscpaypal',
-            self::PAYMENT_SOURCE_CARD => 'oscpaypal_acdc'
+            self::PAYMENT_SOURCE_CARD => 'oscpaypal_acdc',
         ];
 
         if ($oxid === self::PAYMENT_SOURCE_PUI) {

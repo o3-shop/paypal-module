@@ -17,6 +17,29 @@ Run tests with a visible browser:
    make play
 ```
 
+## Trustly (PayPal uAPM) tests
+The Trustly visibility and failed-payment specs were moved here from shop-ce.
+They need an O3-Shop with the PayPal module, demo data and a PayPal sandbox.
+Set these values in `.env`:
+
+``` dotenv
+PAYPAL_E2E=1
+BASE_URL=https://<oxid-shop-hostname>
+TRUSTLY_PRODUCT_ID=<buyable demo product id>
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASS=supersecret
+DB_NAME=o3shop
+```
+
+The CH visibility case temporarily activates Switzerland in `oxcountry` and
+restores the previous value in a `finally` block. Run the two specs with:
+
+``` bash
+npx playwright test tests/e2e/Trustly*.spec.js
+```
+
 ## How to Run and View Tests on a URL
 To test and see a hosted environment, ensure the in is set to: `BASE_URL``.env`
 ``` dotenv
@@ -53,3 +76,7 @@ To run tests with ngrok, you need to set up ngrok to tunnel your local server. F
 
 ### Update config.inc.php
 Add ngrok domain to your `Oxid's config.inc.php` file.
+
+## Sandbox helper scripts
+The scripts that configure a shop checkout for PayPal sandbox development now
+live in [sandbox/README.md](sandbox/README.md).
