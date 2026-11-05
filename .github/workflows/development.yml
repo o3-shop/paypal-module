@@ -22,16 +22,12 @@ jobs:
           coverage: xdebug
           extensions: gd, zip
 
-      - name: Configure Composer authentication for the private client
+      - name: Configure Composer for the paypal-client repository
         working-directory: source/test-module
         env:
-          GH_PAT: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          if [ -z "$GH_PAT" ]; then
-            echo "::error::The GH_PAT secret is required to install the private o3-shop/paypal-client package"
-            exit 1
-          fi
-          composer config --global --auth github-oauth.github.com "$GH_PAT"
+          composer config --global --auth github-oauth.github.com "$GITHUB_TOKEN"
           composer config --global repositories.paypal-client vcs https://github.com/o3-shop/paypal-client
 
       - name: Install module dependencies
@@ -89,15 +85,10 @@ jobs:
           tools: composer:2.2
           extensions: gd, zip, mysqli, pdo_mysql
 
-      - name: Configure Composer authentication for the private client
+      - name: Configure Composer authentication against GitHub rate limits
         env:
-          GH_PAT: ${{ secrets.GH_PAT }}
-        run: |
-          if [ -z "$GH_PAT" ]; then
-            echo "::error::The GH_PAT secret is required to install the private o3-shop/paypal-client package"
-            exit 1
-          fi
-          composer config --global --auth github-oauth.github.com "$GH_PAT"
+          GITHUB_TOKEN: ${{ github.token }}
+        run: composer config --global --auth github-oauth.github.com "$GITHUB_TOKEN"
 
       - name: Install the shop with the module
         working-directory: shop
