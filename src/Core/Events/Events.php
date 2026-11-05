@@ -42,8 +42,7 @@ class Events
         // execute module migrations
         self::executeModuleMigrations();
 
-        // make sure the Apple Pay domain association is available even when
-        // the migration already ran for an existing installation
+        // install the Apple Pay domain association file when the shop has none
         self::ensureApplePayDomainAssociation();
 
         //add static contents and payment methods
@@ -87,8 +86,13 @@ class Events
 
     private static function ensureApplePayDomainAssociation(): void
     {
-        if (function_exists('getShopBasePath')) {
-            ApplePayDomainAssociation::ensureInstalled(getShopBasePath());
+        if (function_exists('getShopBasePath') && !ApplePayDomainAssociation::ensureInstalled(getShopBasePath())) {
+            Registry::getLogger()->warning(sprintf(
+                __METHOD__ . ' - Could not install the Apple Pay domain association file into "%s", '
+                . 'place "%s" there by hand.',
+                ApplePayDomainAssociation::getTargetPath(getShopBasePath()),
+                ApplePayDomainAssociation::getSourcePath()
+            ));
         }
     }
 

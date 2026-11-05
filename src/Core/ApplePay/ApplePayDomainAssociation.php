@@ -24,10 +24,20 @@ final class ApplePayDomainAssociation
     private const RELATIVE_SOURCE = '/out/.well-known/apple-developer-merchantid-domain-association';
     private const RELATIVE_TARGET = '/.well-known/apple-developer-merchantid-domain-association';
 
+    public static function getSourcePath(): string
+    {
+        return dirname(__DIR__, 3) . self::RELATIVE_SOURCE;
+    }
+
+    public static function getTargetPath(string $shopBasePath): string
+    {
+        return rtrim($shopBasePath, '/\\') . self::RELATIVE_TARGET;
+    }
+
     public static function ensureInstalled(string $shopBasePath): bool
     {
-        $source = dirname(__DIR__, 3) . self::RELATIVE_SOURCE;
-        $target = rtrim($shopBasePath, '/\\') . self::RELATIVE_TARGET;
+        $source = self::getSourcePath();
+        $target = self::getTargetPath($shopBasePath);
 
         if (!is_file($source)) {
             return false;
