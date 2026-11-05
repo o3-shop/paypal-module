@@ -17,6 +17,7 @@ use OxidEsales\EshopCommunity\Internal\Framework\Module\Cache\ModuleCacheService
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleConfigurationDaoBridgeInterface;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface;
 use OxidEsales\EshopCommunity\Internal\Transition\Utility\ContextInterface;
+use OxidSolutionCatalysts\PayPal\Core\ApplePay\ApplePayDomainAssociation;
 use OxidSolutionCatalysts\PayPal\Core\Onboarding\Webhook;
 use OxidSolutionCatalysts\PayPal\Service\ModuleSettings;
 use OxidSolutionCatalysts\PayPal\Service\UserRepository;
@@ -40,6 +41,9 @@ class Events
     {
         // execute module migrations
         self::executeModuleMigrations();
+
+        // install the Apple Pay domain association file when the shop has none
+        self::ensureApplePayDomainAssociation();
 
         //add static contents and payment methods
         self::addStaticContents();
@@ -77,6 +81,18 @@ class Events
 
         if ($neeedsUpdate) {
             $migrations->execute('migrations:migrate', 'osc_paypal');
+        }
+    }
+
+    private static function ensureApplePayDomainAssociation(): void
+    {
+        if (function_exists('getShopBasePath') && !ApplePayDomainAssociation::ensureInstalled(getShopBasePath())) {
+            Registry::getLogger()->warning(sprintf(
+                __METHOD__ . ' - Could not install the Apple Pay domain association file into "%s", '
+                . 'place "%s" there by hand.',
+                ApplePayDomainAssociation::getTargetPath(getShopBasePath()),
+                ApplePayDomainAssociation::getSourcePath()
+            ));
         }
     }
 

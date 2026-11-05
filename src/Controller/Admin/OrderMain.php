@@ -195,7 +195,8 @@ class OrderMain extends OrderMain_parent
 
             if ($savedCarrierKey) {
                 $trackingCarrierList = oxNew(PayPalTrackingCarrierList::class);
-                $this->effectiveTrackingCountryCode = $trackingCarrierList->getCountryCodeByCarrierKey($savedCarrierKey);
+                $this->effectiveTrackingCountryCode = $trackingCarrierList
+                    ->getCountryCodeByCarrierKey($savedCarrierKey);
             }
 
             if (!$this->effectiveTrackingCountryCode) {

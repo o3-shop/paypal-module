@@ -16,6 +16,7 @@ use OxidSolutionCatalysts\PayPalApi\Exception\ApiException;
 use OxidSolutionCatalysts\PayPalApi\Model\Orders\AuthenticationResponse;
 use OxidSolutionCatalysts\PayPalApi\Model\Orders\Order as PayPalApiOrder;
 use OxidSolutionCatalysts\PayPal\Exception\CardValidation;
+
 /**
  * Implements the recommended actions according to
  * PayPal documentation: https://developer.paypal.com/docs/checkout/advanced/customize/3d-secure/response-parameters/
@@ -26,7 +27,6 @@ use OxidSolutionCatalysts\PayPal\Exception\CardValidation;
  */
 class SCAValidator implements SCAValidatorInterface
 {
-
     /** @var ModuleSettings */
     private $moduleSettingsService;
 
@@ -37,9 +37,9 @@ class SCAValidator implements SCAValidatorInterface
 
     public function __construct(
         ModuleSettings $moduleSettingsService
-    )
-    {
-        $this->serviceFactory = Registry::get(ServiceFactory::class);;
+    ) {
+        $this->serviceFactory = Registry::get(ServiceFactory::class);
+        ;
         $this->moduleSettingsService = $moduleSettingsService;
     }
 
@@ -69,7 +69,7 @@ class SCAValidator implements SCAValidatorInterface
             }
 
             $authenticationResponse = $this->getCardAuthenticationResponse($payPalOrder);
-        } catch (CardValidation|ApiException $e) {
+        } catch (CardValidation | ApiException $e) {
             // Errors during verification: reject verification
             return false;
         }
@@ -77,7 +77,8 @@ class SCAValidator implements SCAValidatorInterface
         try {
             switch ($this->moduleSettingsService->getPayPalSCAContingency()) {
                 case Constants::PAYPAL_SCA_WHEN_REQUIRED:
-                    return is_null($authenticationResponse) || $this->isCardUsableForPayment($payPalOrder, $authenticationResponse);
+                    return is_null($authenticationResponse)
+                        || $this->isCardUsableForPayment($payPalOrder, $authenticationResponse);
 
                 case Constants::PAYPAL_SCA_ALWAYS:
                     return $this->isCardUsableForPayment($payPalOrder, $authenticationResponse);
@@ -163,8 +164,7 @@ class SCAValidator implements SCAValidatorInterface
     public function isCardUsableForPayment(
         PayPalApiOrder $order,
         ?AuthenticationResponse $authenticationResponse = null
-    ): bool
-    {
+    ): bool {
         $authenticationResponse = $authenticationResponse ??
             $this->getCardAuthenticationResponse($order);
 

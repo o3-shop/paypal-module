@@ -60,7 +60,12 @@ class WebhookController extends WidgetController
             header('Retry-After: ' . $retryAfter);
             exit('');
         } catch (\Exception $exception) {
-            $logger->log('error', 'Webhook processing failed (responding 200 to avoid PayPal retry storm): ' . $exception->getMessage(), [$exception]);
+            $logger->log(
+                'error',
+                'Webhook processing failed (responding 200 to avoid PayPal retry storm): '
+                    . $exception->getMessage(),
+                [$exception]
+            );
         }
         // Respond 200 for handled, permanent or benign cases. A non-200 status causes PayPal to
         // retry the webhook 25 times over 3 days; that is only desired for the transient retry

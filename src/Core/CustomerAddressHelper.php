@@ -23,7 +23,9 @@ trait CustomerAddressHelper
 
     protected function getEMailFromBasket($basket): string
     {
-        return $basket->getBasketUser()->getFieldData('oxusername');
+        $user = $basket->getBasketUser();
+
+        return $user ? $user->getFieldData('oxusername') : '';
     }
 
     protected function getCountryFromBasket($basket): Country

@@ -431,7 +431,11 @@ class Payment
                 ), ['payPalOrderId' => $checkoutOrderId]);
             }
         } catch (Exception $exception) {
-            $this->logger->log('warning', 'PayPal capture refused or failed: ' . $exception->getMessage(), [$exception->getMessage()]);
+            $this->logger->log(
+                'warning',
+                'PayPal capture refused or failed: ' . $exception->getMessage(),
+                [$exception->getMessage()]
+            );
             throw oxNew(StandardException::class, 'OSC_PAYPAL_ORDEREXECUTION_ERROR');
         }
 
@@ -482,23 +486,29 @@ class Payment
             $deleted = $orderModel->cancelPayPalOrder($cancelReason);
             // If order still exists and is not stornoed, cancel was blocked
             // because PayPal already approved/captured the payment.
-            $cancelBlocked = !$deleted && $orderModel->getFieldData('oxstorno') != 1;
-        }
-        if ($cancelBlocked) {
-            // Cancel was blocked because PayPal already approved/captured the
-            // payment. Keep sess_challenge intact so the capture flow can still
-            // resolve the shop order from the session.
-            // Clean up the PayPal session so the customer can start a fresh
-            // order without being stuck on the old PayPal order ID.
-            PayPalSession::unsetPayPalSession(false);
-            // Clear the basket's reference to the old order so that a subsequent
-            // PayPal order creation (e.g. via ProxyController) does not map
-            // the new PayPal order to the already-captured shop order.
-            $basket = $this->eshopSession->getBasket();
-            if ($basket) {
-                $basket->setOrderId(null);
+            if (!$deleted && $orderModel->getFieldData('oxstorno') != 1) {
+                // Cancel was refused because PayPal reports the checkout order
+                // as COMPLETED/APPROVED. Clean up the PayPal session so the
+                // customer can start a fresh order without being stuck on the
+                // old PayPal order ID, and clear the basket's reference to the
+                // old order so that a subsequent PayPal order creation (e.g. via
+                // ProxyController) does not map the new PayPal order to it.
+                PayPalSession::unsetPayPalSession(false);
+                $basket = $this->eshopSession->getBasket();
+                if ($basket) {
+                    $basket->setOrderId(null);
+                }
+
+                // A DENIED/FAILED capture still leaves the checkout order
+                // COMPLETED, which blocks cancelPayPalOrder(). It is not a live
+                // payment: storno it and let the retry start a fresh order.
+                $cancelBlocked = $this->isPayPalPaymentStillOpen($orderModel);
+                if (!$cancelBlocked) {
+                    $this->cancelDeadPayPalOrder($orderModel);
+                }
             }
-        } else {
+        }
+        if (!$cancelBlocked) {
             // Only delete sess_challenge when we are actually cancelling the
             // order that is currently active in the session. After a declined
             // capture the customer's frontend may already have started a retry
@@ -516,6 +526,43 @@ class Payment
         }
 
         return $cancelBlocked;
+    }
+
+    /**
+     * A blocked cancel only means the payment is still open when PayPal reports
+     * COMPLETED, APPROVED or PENDING. A COMPLETED checkout order carrying a
+     * DENIED/FAILED capture is a dead payment.
+     */
+    private function isPayPalPaymentStillOpen(EshopModelOrder $orderModel): bool
+    {
+        if (!method_exists($orderModel, 'isPayPalPaymentStillOpen')) {
+            return true;
+        }
+
+        try {
+            /** @var \OxidSolutionCatalysts\PayPal\Model\Order $orderModel */
+            return $orderModel->isPayPalPaymentStillOpen();
+        } catch (\Throwable $exception) {
+            // If PayPal cannot be asked, keep the block: a reused order is safer
+            // than a second charge for a capture that may still complete.
+            return true;
+        }
+    }
+
+    /**
+     * Storno a shop order whose PayPal capture was DENIED/FAILED, the same way
+     * the PAYMENT.CAPTURE.DENIED webhook does, so it does not linger unpaid.
+     */
+    private function cancelDeadPayPalOrder(EshopModelOrder $orderModel): void
+    {
+        /** @var \OxidSolutionCatalysts\PayPal\Model\Order $orderModel */
+        $orderModel->markOrderPaymentFailed();
+        $orderModel->cancelOrder();
+
+        $this->logger->log('info', sprintf(
+            __METHOD__ . ' - The order "%s" was stornoed because its PayPal capture was denied or failed.',
+            $orderModel->getId()
+        ));
     }
 
     public function getTemporaryOrder(?string $orderId = ''): ?EshopModelOrder
@@ -598,7 +645,6 @@ class Payment
 
         $redirectLink = '';
         if ($response) {
-
             $uapmOrderId = $response->id ?? null;
             if ($uapmOrderId) {
                 PayPalSession::storePayPalOrderId($uapmOrderId);

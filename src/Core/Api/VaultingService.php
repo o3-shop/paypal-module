@@ -449,7 +449,11 @@ class VaultingService extends BaseService
                 $this->storeVaultedTokenInCache($result);
             } catch (ApiException | JsonException $e) {
                 $this->getLogger()
-                    ->log('warning', 'Vaulted token fetch failed, falling back to cached result (' . __CLASS__ . '::' . __FUNCTION__ . '): ' . $e->getMessage());
+                    ->log(
+                        'warning',
+                        'Vaulted token fetch failed, falling back to cached result ('
+                            . __CLASS__ . '::' . __FUNCTION__ . '): ' . $e->getMessage()
+                    );
                 $result = $cachedResult ?: [];
             }
         } else {

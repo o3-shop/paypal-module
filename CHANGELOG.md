@@ -4,6 +4,78 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- The Trustly visibility and failed-payment Playwright specs now live in the module's
+  `tests/e2e/playwright` suite, together with the checkout and database helpers they need.
+  They require `PAYPAL_E2E=1`, a buyable O3-Shop demo product and, for the CH case, shop
+  database access.
+- The PayPal sandbox development scripts moved into `tests/e2e/playwright/sandbox`, with
+  environment-driven shop, container, module, client and tunnel settings.
+- The original Trustly design note moved to `docs/TRUSTLY_PAYMENT_DESIGN.md`.
+- The Apple Pay domain association file is installed only on module activation; the
+  file-only migration `Version20261028120000` is removed. A failed install is now logged.
+- `composer.json` no longer declares the client's VCS repository, because Composer ignores it
+  for dependencies. The README documents the root-level entry shops need until the client is
+  on Packagist.
+- CI runs the module unit tests again, against an O3-Shop `b-1.7` install. The three test
+  classes that still mock the removed `OrderRequestFactory::getAmount()`/`getPurchaseUnits()`
+  are tagged `stale-mocks` and excluded until they are rewritten.
+
+### FIX
+
+- A blocked cancel downgraded because the PayPal capture was DENIED/FAILED now also clears the
+  PayPal session and the basket's order id, and stornoes the dead shop order. Before, a retry
+  through the PayPal buttons could attach the new PayPal order to the dead shop order.
+
+## [2.10.3] - 2026-10-28
+
+### FIX
+
+- Treat a `PENDING` PayPal capture as a pending payment instead of a failed one. The session order
+  and `sess_challenge` are kept, the customer is no longer sent to `payment?payerror=2`, and the
+  `PAYMENT.CAPTURE.DENIED` / `PAYMENT.CAPTURE.COMPLETED` webhook settles the order. This supersedes
+  the 2.10.2 reset for the PENDING case and prevents a retry from creating a second order while
+  the first capture can still complete.
+- Compare the aggregate completed-capture total instead of the original order amount when logging
+  amount/currency mismatches. Partial captures below the order total are legitimate; only a
+  currency mismatch or an over-capture is logged.
+
+### Added
+
+- Provide the Apple Pay domain association from the module. `out/.well-known/apple-developer-merchantid-domain-association`
+  is copied into the shop's `.well-known/` directory on activation and by the new migration when no file exists;
+  an existing merchant-specific file is never overwritten. The file bundled with the module is a fallback - merchants
+  must replace it with the association file issued for their own domain. The file in the shop core stays as a fallback
+  until every shop runs this module version.
+
+### Changed
+
+- The styles workflow installs the private `o3-shop/paypal-client` from its VCS repository using
+  the `GH_PAT` secret, explicitly ignores the inherited `o3-shop/smarty` advisories, and enforces
+  the full PSR-12 warning set (the 19 line-length warnings are fixed).
+- Require `o3-shop/paypal-client` `^3.0.22`.
+
+### Documentation
+
+- Clarify the uAPM payer-data validation failure.
+
+## [2.10.2] - 2026-10-20
+
+### Added
+
+- Trustly (PayPal uAPM) as a payment method, including eligibility, admin configuration and checkout handling.
+
+### FIX
+
+- Send the payer email with Trustly orders. PayPal rejected the order with `MISSING_REQUIRED_PARAMETER` for `/payment_source/trustly/email` otherwise.
+- Reset the PayPal session after a failed payment so a retry creates a new order instead of reusing the completed one.
+- Do not fatal when the basket has no user while building a Trustly or Przelewy24 order: the payer email is then sent empty instead of calling `getFieldData()` on `null`.
+- Fail before sending an invalid PayPal order when Trustly or Przelewy24 is selected without a customer name, email or country. The failure is logged as a shop exception; the customer sees the shop's normal payment error.
+- When re-registering the sandbox webhook, remove only the shop's own previously stored webhook instead of every webhook whose URL contains `oscpaypalwebhook`, so a shared PayPal app used by several developers is left intact.
+
 ## [2.10.1] - 2026-10-15
 
 ### FIX

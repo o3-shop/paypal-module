@@ -202,7 +202,6 @@ class AjaxPaymentController extends BaseController
                 'shopOrderId' => $shopOrderId,
                 'payPalOrder' => $payPalOrder,
             ]);
-
         } catch (\Exception $exception) {
             $this->logger->log('error', sprintf(
                 'Combined order creation failed for shop order %s: %s',
@@ -270,7 +269,8 @@ class AjaxPaymentController extends BaseController
         if (empty($shopOrderId) || !$order->isLoaded() || $order->getFieldData('oxstorno') == 1) {
             $this->logger->log(
                 'error',
-                'PayPal captureOrder: cannot resolve valid shop order (sess_challenge missing, DB fallback failed, or order cancelled)',
+                'PayPal captureOrder: cannot resolve valid shop order '
+                    . '(sess_challenge missing, DB fallback failed, or order cancelled)',
                 ['payPalOrderId' => $payPalOrderId, 'shopOrderId' => $shopOrderId]
             );
             $this->outputJson([
@@ -421,7 +421,8 @@ class AjaxPaymentController extends BaseController
             // retry's frontend would (mistakenly) cancel it. Keeping it open
             // also blocks proper DB hygiene and re-uses an order number that
             // never collected funds. See 0007927.
-            if ($order instanceof ShopOrder
+            if (
+                $order instanceof ShopOrder
                 && $order->isLoaded()
                 && (int)$order->getFieldData('oxstorno') !== 1
             ) {
@@ -527,7 +528,11 @@ class AjaxPaymentController extends BaseController
                 $session->getBasket()
             );
         } catch (ApiException $exception) {
-            $this->logger->log('error', 'ACDC patched-order creation failed: ' . $exception->getMessage(), [$exception]);
+            $this->logger->log(
+                'error',
+                'ACDC patched-order creation failed: ' . $exception->getMessage(),
+                [$exception]
+            );
 
             // The shop order was already persisted by finalizeOrder(); cancel it and
             // clear the session so the customer returns to a clean order overview.
@@ -628,8 +633,7 @@ class AjaxPaymentController extends BaseController
 
     public function isOrderNotSuccessfullyDone(
         ?string $shopOrderId = null
-    ): void
-    {
+    ): void {
         if (is_null($shopOrderId)) {
             $this->logger->log('warning', 'No order id provided for isOrderNotSuccessfullyDone check');
             $this->outputJson([

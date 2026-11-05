@@ -9,7 +9,8 @@
     "mochawesome-report-generator": "^6.2.0"
   },
   "dependencies": {
-    "playwright": "^1.53.2"
+    "playwright": "^1.53.2",
+    "mysql2": "^3.11.0"
   },
   "scripts": {
     "test:pw": "playwright test",

@@ -425,7 +425,11 @@ class ViewConfig extends ViewConfig_parent
         } catch (GuzzleException | Exception $exception) {
             /** @var LoggerInterface $logger */
             $logger = $this->getServiceFromContainer('OxidSolutionCatalysts\PayPal\Logger');
-            $logger->log('warning', 'PayPal client token fetch failed (falling back to empty): ' . $exception->getMessage(), [$exception]);
+            $logger->log(
+                'warning',
+                'PayPal client token fetch failed (falling back to empty): ' . $exception->getMessage(),
+                [$exception]
+            );
             $result = '';
         }
 

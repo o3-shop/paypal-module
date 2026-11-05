@@ -152,6 +152,10 @@
                                     <b>[{oxmultilang ident="OSC_PAYPAL_SPECIAL_PAYMENTS_IDEAL" suffix="COLON"}]</b>
                                     [{if $config->isLiveIDealEligibility()}][{oxmultilang ident="GENERAL_YES"}][{else}][{oxmultilang ident="GENERAL_NO"}][{/if}]
                                 </li>
+                                <li>
+                                    <b>[{oxmultilang ident="OSC_PAYPAL_SPECIAL_PAYMENTS_TRUSTLY" suffix="COLON"}]</b>
+                                    [{if $config->isLiveTrustlyEligibility()}][{oxmultilang ident="GENERAL_YES"}][{else}][{oxmultilang ident="GENERAL_NO"}][{/if}]
+                                </li>
                                 [{* SEPA unbranded comming soon
                                 <li>
                                     <b>[{oxmultilang ident="OSC_PAYPAL_SPECIAL_PAYMENTS_SEPA" suffix="COLON"}]</b>
@@ -250,6 +254,10 @@
                                 <li>
                                     <b>[{oxmultilang ident="OSC_PAYPAL_SPECIAL_PAYMENTS_IDEAL" suffix="COLON"}]</b>
                                     [{if $config->isSandboxIDealEligibility()}][{oxmultilang ident="GENERAL_YES"}][{else}][{oxmultilang ident="GENERAL_NO"}][{/if}]
+                                </li>
+                                <li>
+                                    <b>[{oxmultilang ident="OSC_PAYPAL_SPECIAL_PAYMENTS_TRUSTLY" suffix="COLON"}]</b>
+                                    [{if $config->isSandboxTrustlyEligibility()}][{oxmultilang ident="GENERAL_YES"}][{else}][{oxmultilang ident="GENERAL_NO"}][{/if}]
                                 </li>
                                 [{* SEPA unbranded comming soon
                                 <li>

@@ -101,12 +101,16 @@ class PaymentGateway extends PaymentGateway_parent
                     $existingOrder->getId() !== $order->getId() &&
                     !empty($existingOrder->getFieldData('oxtransid'))
                 ) {
-                    $logger->log('info', 'PayPal order already processed by another shop order, skipping duplicate execution.', [
-                        'payPalOrderId' => $checkoutOrderId,
-                        'existingShopOrderId' => $existingOrder->getId(),
-                        'existingTransId' => $existingOrder->getFieldData('oxtransid'),
-                        'duplicateShopOrderId' => $order->getId(),
-                    ]);
+                    $logger->log(
+                        'info',
+                        'PayPal order already processed by another shop order, skipping duplicate execution.',
+                        [
+                            'payPalOrderId' => $checkoutOrderId,
+                            'existingShopOrderId' => $existingOrder->getId(),
+                            'existingTransId' => $existingOrder->getFieldData('oxtransid'),
+                            'duplicateShopOrderId' => $order->getId(),
+                        ]
+                    );
                     PayPalSession::unsetPayPalSession();
                     return false;
                 }

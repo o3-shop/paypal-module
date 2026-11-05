@@ -294,13 +294,18 @@ class OrderController extends OrderController_parent
             );
             $_POST['sDeliveryAddressMD5'] = $this->getDeliveryAddressMD5();
             $_POST['ord_agb'] = (int)filter_var($_POST['checkAgbTop'] ?? false, FILTER_VALIDATE_BOOLEAN);
-            $_POST['oxdownloadableproductsagreement'] = (int)filter_var($_POST['oxdownloadableproductsagreement'] ?? false, FILTER_VALIDATE_BOOLEAN);
-            $_POST['oxserviceproductsagreement'] = (int)filter_var($_POST['oxserviceproductsagreement'] ?? false, FILTER_VALIDATE_BOOLEAN);
+            $_POST['oxdownloadableproductsagreement'] = (int)filter_var(
+                $_POST['oxdownloadableproductsagreement'] ?? false,
+                FILTER_VALIDATE_BOOLEAN
+            );
+            $_POST['oxserviceproductsagreement'] = (int)filter_var(
+                $_POST['oxserviceproductsagreement'] ?? false,
+                FILTER_VALIDATE_BOOLEAN
+            );
 
             $session->setVariable('isPayPalPaymentCheckout', true);
             $status = $this->execute();
             $session->deleteVariable('isPayPalPaymentCheckout');
-
         } catch (Exception $exception) {
             /** @var LoggerInterface $logger */
             $logger = $this->getServiceFromContainer('OxidSolutionCatalysts\PayPal\Logger');
@@ -414,7 +419,8 @@ class OrderController extends OrderController_parent
             // Check if order was already successfully captured (e.g. by previous request)
             $order = oxNew(EshopModelOrder::class);
             $order->load($sessionOrderId);
-            if ($order->isLoaded() &&
+            if (
+                $order->isLoaded() &&
                 ($order->isOrderSuccessfullyPaid() || !empty($order->getFieldData('oxtransid')))
             ) {
                 return 'thankyou';
@@ -554,20 +560,31 @@ class OrderController extends OrderController_parent
     {
         $requestErrorcode = (string) Registry::getRequest()->getRequestParameter('errorcode');
 
-        $this->getServiceFromContainer(PaymentService::class)
-            ->removeTemporaryOrder('', PayPalCancelReason::BUYER_CANCELLED);
+        $paymentService = $this->getServiceFromContainer(PaymentService::class);
+        $cancelBlocked = $paymentService->removeTemporaryOrder('', PayPalCancelReason::BUYER_CANCELLED);
 
         /** @var LoggerInterface $logger */
         $logger = $this->getServiceFromContainer('OxidSolutionCatalysts\PayPal\Logger');
         $logger->log('info', sprintf(
-            'PayPal session canceled (errorcode: %s, request errorcode: %s, sess_challenge: %s)',
+            'PayPal session canceled (errorcode: %s, request errorcode: %s, sess_challenge: %s, cancelBlocked: %s)',
             $errorcode ?? 'none',
             $requestErrorcode ?: 'none',
-            (string) Registry::getSession()->getVariable('sess_challenge')
+            (string) Registry::getSession()->getVariable('sess_challenge'),
+            $cancelBlocked ? 'yes' : 'no'
         ));
 
         $goNext = 'cl=payment';
         if ($errorcode || $requestErrorcode) {
+            if ($cancelBlocked) {
+                // PENDING/APPROVED/COMPLETED at PayPal: the payment is not a
+                // failure, and showing payerror=2 would invite a second order
+                // while PayPal may still capture the first one. Show the
+                // pending/thank-you state and let the webhook settle it.
+                throw new Redirect(
+                    Registry::getConfig()->getShopSecureHomeURL() . 'cl=thankyou'
+                );
+            }
+
             $goNext .= '&payerror=2';
             throw new Redirect(
                 Registry::getConfig()->getShopSecureHomeURL() . $goNext
