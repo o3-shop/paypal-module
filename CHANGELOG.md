@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- Require `o3-shop/paypal-client` `^1.0`, the re-tagged client release on Packagist. The CI
+  no longer adds the client's VCS repository or the `dev-b-7.0.x as 3.0.22` alias.
 - The Trustly visibility and failed-payment Playwright specs now live in the module's
   `tests/e2e/playwright` suite, together with the checkout and database helpers they need.
   They require `PAYPAL_E2E=1`, a buyable O3-Shop demo product and, for the CH case, shop

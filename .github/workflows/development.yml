@@ -24,20 +24,17 @@ jobs:
           tools: composer:2.2
           extensions: gd, zip
 
-      - name: Configure Composer for the paypal-client repository
+      - name: Authenticate Composer with GitHub
         working-directory: source/test-module
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           composer config --global --auth github-oauth.github.com "$GITHUB_TOKEN"
-          composer config --global repositories.paypal-client vcs https://github.com/o3-shop/paypal-client
 
       - name: Install module dependencies
         id: dependencies
         working-directory: source/test-module
         run: |
-          # ponytail: paypal-client has no release tag yet; drop the alias once v3.0.22 is tagged
-          composer require --no-update "o3-shop/paypal-client:dev-b-7.0.x as 3.0.22"
           composer install
 
       - name: Codestyle check of the affected files (phpcs, phpmd, phpstan)
@@ -103,12 +100,10 @@ jobs:
           cp .env.ci .env
           sed -i "s#/home/runner/work/shop-ce/shop-ce#${GITHUB_WORKSPACE}/shop#g" .env
           cp source/config.inc.php.dist source/config.inc.php
-          composer config repositories.paypal-client vcs https://github.com/o3-shop/paypal-client
           composer config repositories.paypal-module \
             '{"type": "path", "url": "ext/paypal-module", "options": {"symlink": true}}'
           composer install --no-interaction --no-progress
-          # ponytail: paypal-client has no release tag yet; drop the alias once v3.0.22 is tagged
-          composer require "o3-shop/paypal-checkout:*" "o3-shop/paypal-client:dev-b-7.0.x as 3.0.22" \
+          composer require "o3-shop/paypal-checkout:*" \
             "symfony/expression-language:^5.4" --no-interaction --no-progress
           # bin/o3-setup imports the demo data from this satellite, as in the shop-ce CI
           git clone --branch main --depth 1 https://github.com/o3-shop/shop-demodata-ce.git shop-demodata-ce

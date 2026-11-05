@@ -26,18 +26,16 @@ Technical documentation in this repository: [docs/README.md](docs/README.md) - a
 
 ## Install for O3-Shop
 
-The module requires `o3-shop/paypal-client` in the version named in `LATEST_CLIENT_TAG`.
-Until the client is published on Packagist, add its repository to the shop's root
-`composer.json`. Composer ignores `repositories` declared by a dependency, so the module
-cannot provide it:
+The module requires `o3-shop/paypal-client` in the version named in `LATEST_CLIENT_TAG`
+(`^1.0`). Both packages are on Packagist, so no extra `repositories` entry is needed:
 
 ```
-composer config repositories.paypal-client vcs https://github.com/o3-shop/paypal-client
 composer require o3-shop/paypal-checkout
 ```
 
 Release order: tag the client version from `LATEST_CLIENT_TAG` first, then release the
-module that requires it.
+module whose `composer.json` requires it. A module tag that requires an untagged client
+version cannot be installed.
 
 ## Limitations
 
