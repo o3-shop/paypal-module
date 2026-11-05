@@ -62,12 +62,12 @@ $sMetadataVersion = '2.1';
 $aModule = [
     'id' => 'osc_paypal',
     'title' => [
-        'de' => 'PayPal Checkout für O3-Shop',
-        'en' => 'PayPal Checkout for O3-Shop'
+        'de' => 'PayPal Checkout für O3-Shop (Beta)',
+        'en' => 'PayPal Checkout for O3-Shop (Beta)'
     ],
     'description' => [
-        'de' => 'Nutzung des Online-Bezahldienstes von PayPal. Dokumentation: <a href="https://docs.oxid-esales.com/modules/paypal-checkout/de/latest/" target="_blank">PayPal Checkout</a>',
-        'en' => 'Use of the online payment service from PayPal. Documentation: <a href="https://docs.oxid-esales.com/modules/paypal-checkout/en/latest/" target="_blank">PayPal Checkout</a>',
+        'de' => 'Nutzung des Online-Bezahldienstes von PayPal. Beta-Version: für Tests vorgesehen, noch nicht für den Produktivbetrieb freigegeben. Dokumentation: <a href="https://docs.oxid-esales.com/modules/paypal-checkout/de/latest/" target="_blank">PayPal Checkout</a>',
+        'en' => 'Use of the online payment service from PayPal. Beta version: intended for testing, not yet approved for production use. Documentation: <a href="https://docs.oxid-esales.com/modules/paypal-checkout/en/latest/" target="_blank">PayPal Checkout</a>',
     ],
     'thumbnail' => 'out/img/paypal.png',
     'version' => '2.10.3',
