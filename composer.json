@@ -35,12 +35,6 @@
             ]
         }
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/o3-shop/paypal-client"
-        }
-    ],
     "require": {
         "giggsey/libphonenumber-for-php": "^8.12",
         "viison/address-splitter": "^0.3.4",
