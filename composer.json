@@ -88,8 +88,8 @@
     },
     "config": {
         "allow-plugins": {
-            "oxid-esales/oxideshop-unified-namespace-generator": true,
-            "oxid-esales/oxideshop-composer-plugin": true
+            "o3-shop/shop-unified-namespace-generator": true,
+            "o3-shop/shop-composer-plugin": true
         },
         "policy": {
             "advisories": {

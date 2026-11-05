@@ -110,6 +110,10 @@ jobs:
           # ponytail: paypal-client has no release tag yet; drop the alias once v3.0.22 is tagged
           composer require "o3-shop/paypal-checkout:*" "o3-shop/paypal-client:dev-b-7.0.x as 3.0.22" \
             "symfony/expression-language:^5.4" --no-interaction --no-progress
+          # bin/o3-setup imports the demo data from this satellite, as in the shop-ce CI
+          git clone --branch main --depth 1 https://github.com/o3-shop/shop-demodata-ce.git shop-demodata-ce
+          rm -rf vendor/o3-shop/shop-demodata-ce
+          ln -s ../../shop-demodata-ce vendor/o3-shop/shop-demodata-ce
           # MariaDB does not know the mysql client's --skip-ssl option
           sed -i "s/ --skip-ssl//g" vendor/o3-shop/testing-library/library/Services/Library/DatabaseHandler.php
 
