@@ -32,6 +32,7 @@ jobs:
             exit 1
           fi
           composer config --global --auth github-oauth.github.com "$GH_PAT"
+          composer config --global repositories.paypal-client vcs https://github.com/o3-shop/paypal-client
 
       - name: Install module dependencies
         id: dependencies
@@ -51,3 +52,82 @@ jobs:
           path: |
             source/test-module/tests/reports/phpstan.report.json
             source/test-module/tests/reports/phpmd.report.json
+
+  unit_tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ '8.1' ]
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.10
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: o3shop_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+    steps:
+      - name: Checkout the shop
+        uses: actions/checkout@v4
+        with:
+          repository: o3-shop/shop-ce
+          ref: b-1.7
+          path: shop
+
+      - name: Checkout current module
+        uses: actions/checkout@v4
+        with:
+          path: shop/ext/paypal-module
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer:2.2
+          extensions: gd, zip, mysqli, pdo_mysql
+
+      - name: Configure Composer authentication for the private client
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          if [ -z "$GH_PAT" ]; then
+            echo "::error::The GH_PAT secret is required to install the private o3-shop/paypal-client package"
+            exit 1
+          fi
+          composer config --global --auth github-oauth.github.com "$GH_PAT"
+
+      - name: Install the shop with the module
+        working-directory: shop
+        env:
+          COMPOSER_ROOT_VERSION: 1.7.x-dev
+        run: |
+          cp .env.ci .env
+          sed -i "s#/home/runner/work/shop-ce/shop-ce#${GITHUB_WORKSPACE}/shop#g" .env
+          cp source/config.inc.php.dist source/config.inc.php
+          composer config repositories.paypal-client vcs https://github.com/o3-shop/paypal-client
+          composer config repositories.paypal-module \
+            '{"type": "path", "url": "ext/paypal-module", "options": {"symlink": true}}'
+          composer install --no-interaction --no-progress
+          composer require o3-shop/paypal-checkout:* symfony/expression-language --no-interaction --no-progress
+          # MariaDB does not know the mysql client's --skip-ssl option
+          sed -i "s/ --skip-ssl//g" vendor/o3-shop/testing-library/library/Services/Library/DatabaseHandler.php
+
+      - name: Set up the shop database and activate the module
+        working-directory: shop
+        run: |
+          php bin/o3-setup
+          php bin/oe-console oe:module:install-configuration source/modules/osc/paypal
+          php bin/oe-console oe:module:activate osc_paypal
+
+      - name: Run the module unit tests
+        working-directory: shop
+        env:
+          INSTALL_SHOP: 0
+        run: |
+          php vendor/bin/phpunit \
+            --bootstrap vendor/o3-shop/testing-library/bootstrap.php \
+            --exclude-group stale-mocks \
+            vendor/o3-shop/paypal-checkout/tests/Unit

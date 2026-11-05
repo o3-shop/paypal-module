@@ -15,6 +15,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The PayPal sandbox development scripts moved into `tests/e2e/playwright/sandbox`, with
   environment-driven shop, container, module, client and tunnel settings.
 - The original Trustly design note moved to `docs/TRUSTLY_PAYMENT_DESIGN.md`.
+- The Apple Pay domain association file is installed only on module activation; the
+  file-only migration `Version20261028120000` is removed. A failed install is now logged.
+- `composer.json` no longer declares the client's VCS repository, because Composer ignores it
+  for dependencies. The README documents the root-level entry shops need until the client is
+  on Packagist.
+- CI runs the module unit tests again, against an O3-Shop `b-1.7` install. The three test
+  classes that still mock the removed `OrderRequestFactory::getAmount()`/`getPurchaseUnits()`
+  are tagged `stale-mocks` and excluded until they are rewritten.
+
+### FIX
+
+- A blocked cancel downgraded because the PayPal capture was DENIED/FAILED now also clears the
+  PayPal session and the basket's order id, and stornoes the dead shop order. Before, a retry
+  through the PayPal buttons could attach the new PayPal order to the dead shop order.
 
 ## [2.10.3] - 2026-10-28
 

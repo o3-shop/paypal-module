@@ -27,6 +27,11 @@ use OxidSolutionCatalysts\PayPalApi\Model\Orders\OrderExperienceContext;
 use OxidSolutionCatalysts\PayPalApi\Model\Orders\OrderRequest;
 use PHPUnit\Framework\MockObject\MockObject;
 
+/**
+ * Mocks OrderRequestFactory::getAmount()/getPurchaseUnits(), which were removed in b759a37d.
+ *
+ * @group stale-mocks
+ */
 class PaypalPaymentTest extends UnitTestCase
 {
     use \OxidEsales\EshopCommunity\Tests\Integration\Internal\ContainerTrait;
