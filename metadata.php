@@ -70,7 +70,7 @@ $aModule = [
         'en' => 'Use of the online payment service from PayPal. Beta version: intended for testing, not yet approved for production use. Documentation: <a href="https://docs.oxid-esales.com/modules/paypal-checkout/en/latest/" target="_blank">PayPal Checkout</a>',
     ],
     'thumbnail' => 'out/img/paypal.png',
-    'version' => '2.10.3',
+    'version' => '1.7.0',
     'author' => 'O3-Shop, OXID eSales AG',
     'url' => 'https://www.o3-shop.com/',
     'email' => 'info@o3-shop.com',
